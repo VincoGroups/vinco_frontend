@@ -2,6 +2,92 @@ import React from 'react';
 import generateId from '../../../../ServerSide/generate';
 import firebase from '../../../../ServerSide/basefile';
 import LoadingBlue from '../../../../NonAuth/Comps/Loadingblue';
+class FileComments extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            outputfilecomment: '',
+            outputfileres: []
+        }
+    }
+
+   async componentDidMount() {
+     await this.fetchFileComments();
+    }
+
+     fetchFileComments = () => {
+        fetch('/api/boxfiler/getfilecomments/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + this.props.currentfolderid + '/' + this.props.currentfileid)
+        .then((res) => {
+            return res.json();
+        }).then((bod) => {
+            this.setState({
+                outputfileres: bod
+            })
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
+    CommentOutput = () => {
+        const outputdata = {
+            comment: this.state.outputfilecomment,
+            date: new Date(),
+            creator: firebase.auth().currentUser.uid,
+            displayname: firebase.auth().currentUser.displayName,
+            commentid: generateId(54)
+        }
+
+        fetch('/api/boxfiler/commentonfile/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + this.props.currentfolderid + '/' + this.props.currentfileid , {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(outputdata)
+        }).then(() => {
+         return this.fetchFileComments();
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
+    OutputComment = () => {
+        return (
+            <div>
+                {
+                    this.state.outputfileres.map(item => (
+                        <div key={this.state.outputfileres.indexOf(item)}>
+                            <div className="comment-container">
+                              <h6 className="comment d-inline-flex p-2">{item.displayname + ': ' + item.comment}</h6>
+                            </div>
+                        </div>
+                    ))
+                }
+            </div>
+        )
+    }
+
+
+    render() {
+        console.log(this.state);
+        return(
+            <div>
+                <input type="text" className="input-comment" name="outputfilecomment" onChange={(e) => {
+                  this.setState({
+                    [e.target.name] : e.target.value
+                  })
+                 }} onKeyDown={(e) => {
+                    if (e.keyCode === 13) {
+                    this.CommentOutput();
+                   }
+                }} placeholder="Comment on this file..."/>
+                <div className="input-container">
+                <this.OutputComment/>
+               </div>
+            </div>
+        )
+    }
+}
 class Filer extends React.Component {
     constructor(props) {
         super(props);
@@ -13,10 +99,10 @@ class Filer extends React.Component {
             currentfolderid: '',
             currentfoldername: '',
             currentfilename: '',
+            currentfileid: '',
             outputfile: false,
             url:'',
-            loading: true,
-            outputfilecomment: ''
+            loading: true
         }
     }
 
@@ -45,21 +131,7 @@ class Filer extends React.Component {
 
      
 
-     OutputFiler = ({outputfile , url, currentfilename}) => {
-        
-        const fetchOutputComments = () => {
-            let file = 'fmk'
-        }
-        
-        const CommentOutput = () => {
-            const outputdata = {
-                comment: this.state.outputfilecomment,
-                date: new Date(),
-                creator: firebase.auth().currentUser.uid,
-                displayname: firebase.auth().currentUser.displayName
-            }
-        }
-        
+     OutputFiler = ({outputfile , url, currentfilename}) => {    
         if (outputfile === true) {
             return (
                 <div>
@@ -74,11 +146,7 @@ class Filer extends React.Component {
                               <h3>{currentfilename}</h3>
                               <div className="row">
                                 <div className="col-md-4">
-                                 <input type="text" className="input-comment" onChange={(e) => {
-                                     this.setState({
-                                        [e.target.name] : e.target.value
-                                     })
-                                 }} placeholder="Comment on this file..."/>
+                                 <FileComments groupid={this.props.groupid} boxfilerid={this.props.boxfilerid} currentfolderid={this.state.currentfolderid} currentfileid={this.state.currentfileid} />
                                 </div>
                                 <div className="col-md-8">
                                  <embed className="fileoutput" title={currentfilename} src={url} width="100%"/>
@@ -271,8 +339,12 @@ class Filer extends React.Component {
                                                 this.setState({
                                                     url: url,
                                                     currentfilename: index.filename,
-                                                    outputfile: true
+                                                    outputfile: true,
+                                                    currentfolderid: item.folderid,
+                                                    currentfileid: index.fileid
                                                 })
+                                            }).then(() => {
+                                                
                                             }).catch((error) => {
                                                 console.log(error);
                                             })
@@ -453,6 +525,7 @@ class Filer extends React.Component {
     }
 
     render() {
+        console.log(this.state);
         return (
             <div>
              <div className="row">
