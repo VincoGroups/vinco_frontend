@@ -3,7 +3,6 @@ import Authnav from '../Authnav';
 import BoxFiler from './BoxFiler/BoxFiler';
 import Mainchat from './Mainchat/Mainchat';
 import firebase from '../../../ServerSide/basefile';
-import {Redirect} from 'react-router-dom';
 
 class Group extends React.Component {
 
@@ -50,7 +49,7 @@ class Group extends React.Component {
               console.log(error)
           })
         } else if (bod.userresponse === false) {
-          return <Redirect to = '/dash' />
+          this.props.history.push('/dash');
         }
       }).catch((error) => {
         console.log(error);
