@@ -2,6 +2,7 @@ import React from 'react';
 import generateId from '../../../../ServerSide/generate';
 import firebase from '../../../../ServerSide/basefile';
 import LoadingBlue from '../../../../NonAuth/Comps/Loadingblue';
+import FileView from './Fileview';
 class FileComments extends React.Component {
     constructor(props) {
         super(props);
@@ -100,6 +101,7 @@ class Filer extends React.Component {
             currentfoldername: '',
             currentfilename: '',
             currentfileid: '',
+            currentfiletype: '',
             outputfile: false,
             url:'',
             loading: true
@@ -149,7 +151,7 @@ class Filer extends React.Component {
                                  <FileComments groupid={this.props.groupid} boxfilerid={this.props.boxfilerid} currentfolderid={this.state.currentfolderid} currentfileid={this.state.currentfileid} />
                                 </div>
                                 <div className="col-md-8">
-                                 <embed className="fileoutput" title={currentfilename} src={url} width="100%"/>
+                                    <FileView type={this.state.currentfiletype} url={this.state.url}/>
                                 </div>
                               </div>
                           </div>
@@ -341,7 +343,8 @@ class Filer extends React.Component {
                                                     currentfilename: index.filename,
                                                     outputfile: true,
                                                     currentfolderid: item.folderid,
-                                                    currentfileid: index.fileid
+                                                    currentfileid: index.fileid,
+                                                    currentfiletype: index.filetype
                                                 })
                                             }).then(() => {
                                                 

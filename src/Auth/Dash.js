@@ -150,15 +150,13 @@ class Dash extends React.Component {
                                 const data = {
                                     groupid: generateId(102),
                                     clientid: generateId(30),
-                                    mainchatid: generateId(101),
-                                    subchatid: generateId(100),
                                     boxfilerid: generateId(99),
                                     wallpostid: generateId(97),
                                     groupname: this.state.groupname,
                                     groupdescription: this.state.groupdescription,
                                     usersadded: this.state.usersadded,
                                     creator: this.state.currentuser,
-                                    groupapi: generateId(30),
+                                    groupapi: generateId(36),
                                     users: users
                                 }
   
