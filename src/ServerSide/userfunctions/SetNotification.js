@@ -1,0 +1,59 @@
+import generateId from '../generate';
+
+const setNotifications = (contenttype , uid , displayname , groupname, groupid ,input) => {
+
+    let message; let extracomment;
+    if (contenttype === "commentonpost") {
+        message = displayname + ' posted a comment in ' + groupname
+        extracomment = displayname + ': ' + input
+    } else if (contenttype === "createpost") {
+        message = displayname + ' made a post'
+        extracomment = input
+    } else if (contenttype === "createfolder") {
+        message = displayname + ' made a folder named ' + input
+    } else if (contenttype === "commentonfile") {
+        message = displayname + ' commented on ' + input
+        extracomment = displayname + ": " + input
+    }
+
+    const data = {
+        creator: uid,
+        displayname: displayname,
+        groupname: groupname,
+        displaycomment: message,
+        commentpost: input,
+        extracomment: extracomment,
+        date: new Date(),
+        notificationid: generateId(50),
+        contentype: contenttype
+    }
+   
+
+    fetch('/api/group/getgroupusers/' + groupid)
+    .then((res) => {
+        return res.json();
+    }).then((bod) => {
+        const currentuid = bod.users.indexOf(data.creator);
+        bod.users.splice(currentuid, 1);
+        console.log(bod);
+        bod.users.forEach((item) => {
+            fetch(`/user/setnotification/${item}` , {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(() => {
+                console.log('worked')
+            }).catch((error) => {
+                console.log(error);
+            })
+        })
+    }).catch((error) => {
+        console.log(error);
+    })
+}
+
+export default setNotifications;
+

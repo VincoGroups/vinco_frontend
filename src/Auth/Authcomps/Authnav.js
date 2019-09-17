@@ -1,6 +1,7 @@
 import React from 'react';
 import Useraccount from './Useraccount';
 import {NavLink} from 'react-router-dom';
+import Notifications from '../../ServerSide/userfunctions/Notifications';
 
 class Authnav extends React.Component {
     render() {
@@ -14,17 +15,22 @@ class Authnav extends React.Component {
                  </div>
                  <div className="col-md-3">
                    <div className="row">
-                   <div className="col-md-4">
+                   <div className="col-md-3">
                       <div className="nav-padding">
                       <NavLink to="/dash" className="navlink"><h6>HOME</h6></NavLink>
                       </div>
-                    </div>
-                    <div className="col-md-4">
+                   </div>
+                   <div className="col-md-3">
                      <div className="nav-padding">
                       <NavLink to="/search" className="navlink"><h6>SEARCH</h6></NavLink>
                      </div>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-3">
+                     <div className="nav-padding">
+                       <Notifications/>
+                     </div>
+                    </div>
+                    <div className="col-md-3">
                        <Useraccount/>
                     </div>
                    </div>

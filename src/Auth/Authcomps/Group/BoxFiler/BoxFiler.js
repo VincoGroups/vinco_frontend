@@ -367,7 +367,7 @@ class Filer extends React.Component {
         } else {
                 return (
                     <div>
-                      <div className="empty-folders">
+                      <div className="empty-container">
                           <h1 className="text-center">THERE ARE NO FOLDERS IN THE GROUP</h1>
                       </div>
                     </div>

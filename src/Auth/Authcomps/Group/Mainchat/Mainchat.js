@@ -1,21 +1,25 @@
 import React from 'react';
 import generateId from '../../../../ServerSide/generate';
 import firebase from '../../../../ServerSide/basefile';
+import setNotifications from '../../../../ServerSide/userfunctions/SetNotification';
+import Loadingblue from '../../../../NonAuth/Comps/Loadingblue';
 
 class Comments extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             show: false,
-            response: []
+            response: [],
+            commentinput: '',
         }
     }
 
-   async componentDidMount() {
-     await this.fetchComments();
+    componentDidMount() {
+      this.fetchComments();
     }
 
     fetchComments = () => {
+        setTimeout(() => {
         fetch('/wallpostapi/getcomments/' + this.props.groupid + '/' + this.props.wallpostid + '/' + this.props.postid)
         .then((response) => {
             return response.json();
@@ -27,6 +31,7 @@ class Comments extends React.Component {
         }).catch((error) => {
             console.log(error);
         })
+        } , 400)
       }
 
       ShowCommentOuptput = ({show}) => {
@@ -64,6 +69,7 @@ class Comments extends React.Component {
         <div>
         <div>
         <div>
+         <div className="button-small-padding">
          <button className="plain-btn" onClick={() => {
              if(this.state.show === false) {
                  this.setState({
@@ -75,6 +81,7 @@ class Comments extends React.Component {
                  })
              }
          }}>Comments</button>
+         </div>
          <this.ShowCommentOuptput show={this.state.show}/>
          </div>
         </div>
@@ -106,6 +113,7 @@ class Comments extends React.Component {
                      console.log(bod);
                      if(bod.response === true) {
                          this.fetchComments();
+                         setNotifications("commentonpost" , firebase.auth().currentUser.uid , firebase.auth().currentUser.displayName , this.props.groupname , this.props.groupid, this.state.commentinput);
                      }
                  }).catch((error) => {
                      console.log(error);
@@ -113,6 +121,7 @@ class Comments extends React.Component {
              }
          }} placeholder="Comment here..."/>
        </div>
+       <Loadingblue loading={this.state.loading} />
       </div>
        )
     }
@@ -127,61 +136,75 @@ class MainChatComponent extends React.Component{
             postsres: [],
             commentinput: '',
             response: '',
-            show: false
+            show: false,
+            loading: true
         }
     }
 
-  async componentDidMount() {
-    await this.fetchWallposts();
+   componentDidMount() {
+    this.fetchWallposts()
    }
 
    fetchWallposts = () => {
+    setTimeout(() => {
     fetch('/wallpostapi/getposts/' + this.props.groupid + '/' + this.props.wallpostid)
     .then((res) => {
         return res.json();
     }).then((bod) => {
         const newbod = bod.sort((a, b) => new Date(a.date) - new Date(b.date));
         this.setState({
-            postsres: newbod.reverse()
+            postsres: newbod.reverse(),
+            loading: false
         })
     }).catch((error) => {
         console.log(error);
     })
+    } , 500)
    }
 
    ShowPosts = () => {
-       return(
-           <div>
-             <div className="posts-container">
-                {
-                    this.state.postsres.map(item => (
-                        <div key={this.state.postsres.indexOf(item)}>
-                          <div className="post-spacing">
-                            <div className="slightshadow">
-                            <div className="post-heading">
-                             <div className="row">
-                              <div className="col-md-10">
-                               <h6>{item.displayname}</h6>
-                              </div>
-                              <div className="">
-                                <h6>{item.displaydate}</h6>
+       if (this.state.postsres.length > 0) {
+        return(
+            <div>
+              <div className="posts-container">
+                 {
+                     this.state.postsres.map(item => (
+                         <div key={this.state.postsres.indexOf(item)}>
+                           <div className="post-spacing">
+                             <div className="slightshadow">
+                             <div className="post-heading">
+                              <div className="row">
+                               <div className="col-md-10">
+                                <h6>{item.displayname}</h6>
+                               </div>
+                               <div className="">
+                                 <h6>{item.displaydate}</h6>
+                               </div>
                               </div>
                              </div>
-                            </div>
-                            <div className="post">  
-                                <h4>{item.message}</h4>
-                            </div>
-                            <div className="post-options">
-                              <Comments groupid={this.props.groupid} postid ={item.postid} wallpostid={this.props.wallpostid}/>
-                            </div>
-                            </div>
-                          </div>
-                        </div>
-                    ))
-                }
-             </div>
-           </div>
-       )
+                             <div className="post">  
+                                 <h4>{item.message}</h4>
+                             </div>
+                             <div className="post-options">
+                               <Comments groupname = {this.props.groupname} groupid={this.props.groupid} postid ={item.postid} wallpostid={this.props.wallpostid}/>
+                             </div>
+                             </div>
+                           </div>
+                         </div>
+                     ))
+                 }
+              </div>
+            </div>
+        )
+       } else {
+           return (
+               <div>
+                 <div className="empty-container">
+                    <h2 className="text-center">THERE ARE NO POSTS</h2>
+                 </div>
+               </div>
+           )
+       }
    }
 
     MakePost = () => {
@@ -205,12 +228,15 @@ class MainChatComponent extends React.Component{
         })
         .then(() => {
             this.fetchWallposts();
+            setNotifications("createpost" , firebase.auth().currentUser.uid, firebase.auth().currentUser.displayName, this.props.groupname, this.props.groupid , this.state.post)
+
         }).catch((error) => {
             console.log(error);
         })
     }
 
     render() {
+        console.log(this.state);
         return (
             <div>
              <div className="mainchat-component">
@@ -232,19 +258,20 @@ class MainChatComponent extends React.Component{
                       </div>
               </div>
               <this.ShowPosts/>
+              <Loadingblue loading={this.state.loading}/>
              </div>
             </div>
         )
     }
 }
 
-const Mainchat = ({mainchat , mainchatname, groupid , wallpostid}) => {
+const Mainchat = ({mainchat , groupname, groupid , wallpostid}) => {
     if (mainchat === true) {
         return (
             <div>
               <div className="mainchat-page">
               <div className="container">
-                <MainChatComponent groupid={groupid} wallpostid={wallpostid}/>
+                <MainChatComponent groupname={groupname} groupid={groupid} wallpostid={wallpostid}/>
               </div>
               </div>
             </div>

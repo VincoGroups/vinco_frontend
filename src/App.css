@@ -447,6 +447,11 @@
    padding-top: 12px;
 }
 
+.button-small-padding {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
 .client-padding {
   padding-top: 25px;
 }
@@ -733,7 +738,10 @@
 .post {
   background-color: white;
   color: #0D47A1;
-  padding: 20px;
+  padding-top: 20px;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-bottom: 6px;
 }
 
 .post-heading {
@@ -839,7 +847,7 @@
   padding-top: 60px;
 }
 
-.empty-folders {
+.empty-container {
   padding-top: 50px;
   color: #0D47A1;
 }
@@ -854,6 +862,22 @@
 .iframebody {
  width: 100%;
  height: 500px;
+}
+
+.notification-padding {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.header-notification {
+  background-color: #2962FF;
+  color: white;
+  padding: 5px;
+  border-radius: 9px;
+}
+
+.header-notification:hover {
+  background-color: #2979FF;
 }
 
 

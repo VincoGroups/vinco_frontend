@@ -198,8 +198,8 @@ class Group extends React.Component {
               </div>
               </div>
               <div className="grouppage">
-                <BoxFiler groupid={this.state.groupres.groupid} boxfiler={this.state.boxfiler} boxfilerid={this.state.groupres.boxfilerid} />
-                <Mainchat groupid={this.state.groupres.groupid} wallpostid={this.state.groupres.wallpostid} mainchat={this.state.wallpost} mainchatname={this.state.groupres.groupname}/>
+                <BoxFiler groupname={this.state.groupres.groupname} groupid={this.state.groupres.groupid} boxfiler={this.state.boxfiler} boxfilerid={this.state.groupres.boxfilerid} />
+                <Mainchat groupname={this.state.groupres.groupname} groupid={this.state.groupres.groupid} wallpostid={this.state.groupres.wallpostid} mainchat={this.state.wallpost} mainchatname={this.state.groupres.groupname}/>
               </div>
              </div>
              <this.GroupDetails groupdetails={this.state.groupdetails}/>
