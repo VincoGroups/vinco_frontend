@@ -2,6 +2,7 @@ import React from 'react';
 import generateId from '../../../../ServerSide/generate';
 import firebase from '../../../../ServerSide/basefile';
 import LoadingBlue from '../../../../NonAuth/Comps/Loadingblue';
+import setNotifications from '../../../../ServerSide/userfunctions/SetNotification';
 import FileView from './Fileview';
 class FileComments extends React.Component {
     constructor(props) {
@@ -12,12 +13,13 @@ class FileComments extends React.Component {
         }
     }
 
-   async componentDidMount() {
-     await this.fetchFileComments();
+    componentDidMount() {
+      this.fetchFileComments();
     }
 
      fetchFileComments = () => {
-        fetch('/api/boxfiler/getfilecomments/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + this.props.currentfolderid + '/' + this.props.currentfileid)
+        setTimeout(() => {
+            fetch('/api/boxfiler/getfilecomments/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + this.props.currentfolderid + '/' + this.props.currentfileid)
         .then((res) => {
             return res.json();
         }).then((bod) => {
@@ -27,6 +29,7 @@ class FileComments extends React.Component {
         }).catch((error) => {
             console.log(error);
         })
+        } , 400);
     }
 
     CommentOutput = () => {
@@ -46,6 +49,7 @@ class FileComments extends React.Component {
             },
             body: JSON.stringify(outputdata)
         }).then(() => {
+         setNotifications("commentonfile" , firebase.auth().currentUser.uid , firebase.auth().currentUser.displayName , this.props.groupname , this.props.groupid , this.state.outputfilecomment , this.props.filename);
          return this.fetchFileComments();
         }).catch((error) => {
             console.log(error);
@@ -112,13 +116,12 @@ class Filer extends React.Component {
        this.setState({
            loading: true
        })
-       setTimeout(() => {
-        this.fetchFolders();
-       } , 500);
+       this.fetchFolders();
      }
 
      fetchFolders = () => {
-        fetch('/api/boxfiler/getfolders/' + this.props.groupid + '/' + this.props.boxfilerid)
+        setTimeout(() => {
+            fetch('/api/boxfiler/getfolders/' + this.props.groupid + '/' + this.props.boxfilerid)
         .then((res) => {
             return res.json()
         }).then((bod) => {
@@ -129,6 +132,7 @@ class Filer extends React.Component {
         }).catch((error) => {
             console.log(error);
         })
+        } , 400)
      }
 
      
@@ -148,10 +152,10 @@ class Filer extends React.Component {
                               <h3>{currentfilename}</h3>
                               <div className="row">
                                 <div className="col-md-4">
-                                 <FileComments groupid={this.props.groupid} boxfilerid={this.props.boxfilerid} currentfolderid={this.state.currentfolderid} currentfileid={this.state.currentfileid} />
+                                 <FileComments filename={currentfilename} groupid={this.props.groupid} boxfilerid={this.props.boxfilerid} currentfolderid={this.state.currentfolderid} currentfileid={this.state.currentfileid} />
                                 </div>
                                 <div className="col-md-8">
-                                    <FileView type={this.state.currentfiletype} url={this.state.url}/>
+                                 <FileView type={this.state.currentfiletype} url={this.state.url}/>
                                 </div>
                               </div>
                           </div>
@@ -217,6 +221,9 @@ class Filer extends React.Component {
                                       this.setState({
                                           addfilemodal: false
                                       })
+
+                                      this.fetchFolders();
+                                      setNotifications("addfiletofolder" , firebase.auth().currentUser.uid , firebase.auth().currentUser.displayName , this.props.groupname , this.props.groupid , null , currentfoldername)
                                   }
                               }).catch((error) => {
                                   console.log(error);
@@ -270,6 +277,8 @@ class Filer extends React.Component {
                                           this.setState({
                                               addfilemodal: false
                                           })
+
+                                          this.fetchFolders()
                                       }
                                   }).catch((error) => {
                                       console.log(error);
@@ -446,6 +455,8 @@ class Filer extends React.Component {
                                       })
 
                                       this.fetchFolders();
+
+                                      setNotifications("createfolder" ,firebase.auth().currentUser.uid, firebase.auth().currentUser.displayName , this.props.groupname , this.props.groupid, this.state.foldername)
                                   }
                               }).catch((error) => {
                                   console.log(error);
@@ -505,6 +516,8 @@ class Filer extends React.Component {
                                               foldermodal: false
                                           })
 
+                                          setNotifications("createfolder" ,firebase.auth().currentUser.uid, firebase.auth().currentUser.displayName , this.props.groupname , this.props.groupid, this.state.foldername)
+
                                           this.fetchFolders();
                                       }
                                   }).catch((error) => {
@@ -555,12 +568,12 @@ class Filer extends React.Component {
     }
 }
 
-const BoxFiler = ({boxfiler , groupid, boxfilerid}) => {
+const BoxFiler = ({boxfiler , groupname ,groupid, boxfilerid}) => {
     if (boxfiler === true) {
         return (
           <div>
              <div className="folders-container">
-                 <Filer groupid={groupid} boxfilerid={boxfilerid}/>
+                 <Filer groupname={groupname} groupid={groupid} boxfilerid={boxfilerid}/>
              </div>
           </div>
         )

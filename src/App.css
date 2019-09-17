@@ -880,4 +880,8 @@
   background-color: #2979FF;
 }
 
-
+.notification-box {
+  width: 100%;
+  height: 400px;
+  overflow: scroll;
+}

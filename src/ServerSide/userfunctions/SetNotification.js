@@ -1,6 +1,6 @@
 import generateId from '../generate';
 
-const setNotifications = (contenttype , uid , displayname , groupname, groupid ,input) => {
+const setNotifications = (contenttype , uid , displayname , groupname, groupid ,input , name) => {
 
     let message; let extracomment;
     if (contenttype === "commentonpost") {
@@ -10,9 +10,11 @@ const setNotifications = (contenttype , uid , displayname , groupname, groupid ,
         message = displayname + ' made a post'
         extracomment = input
     } else if (contenttype === "createfolder") {
-        message = displayname + ' made a folder named ' + input
+        message = displayname + ' made a folder named ' + input + ' in ' + groupname
+    } else if (contenttype === "addfiletofolder") {
+        message = displayname + 'added a file in' + name 
     } else if (contenttype === "commentonfile") {
-        message = displayname + ' commented on ' + input
+        message = displayname + ' commented on ' + name
         extracomment = displayname + ": " + input
     }
 
