@@ -2,6 +2,7 @@ import React from 'react';
 import Authnav from '../Authnav';
 import BoxFiler from './BoxFiler/BoxFiler';
 import Mainchat from './Mainchat/Mainchat';
+import Connections from './Connections/Connections';
 import firebase from '../../../ServerSide/basefile';
 
 class Group extends React.Component {
@@ -12,11 +13,12 @@ class Group extends React.Component {
             groupres : [],
             boxfiler: false,
             wallpost: true,
+            groupconnectivity: false,
             groupdetails: false,
             usersdetails: [],
             leavegroupmodal: false,
             show: 'hide'
-        }
+       }
     }
 
    async componentDidMount() {
@@ -157,8 +159,7 @@ class Group extends React.Component {
 
 
     render() {
-      console.log(this.state);
-        return (
+       return (
             <div>
              <Authnav/>
              <div className="page">
@@ -177,21 +178,32 @@ class Group extends React.Component {
               <div className="group-nav-padding">
                 <div className="float-left">
                 <div className="row">
-                 <div className="col-md-6">
+                 <div className="col-md-4">
                   <h6 className="text-center" onClick={() => {
                       this.setState({
                         boxfiler: false,
                         wallpost: true,
+                        groupconnectivity: false
                       })
                   }}>POSTS</h6>
                  </div>
-                 <div className="col-md-6">
+                 <div className="col-md-4">
                   <h6 className="text-center" onClick={() => {
                       this.setState({
                         boxfiler: true,
                         wallpost: false,
+                        groupconnectivity: false
                       })
                   }}>BOXFILER</h6>
+                 </div>
+                 <div className="col-md-4">
+                  <h6 className="text-center" onClick={() => {
+                      this.setState({
+                        boxfiler: false,
+                        wallpost: false,
+                        groupconnectivity: true
+                      })
+                  }}>CONNECTIONS</h6>
                  </div>
                 </div>
                 </div>
@@ -200,6 +212,7 @@ class Group extends React.Component {
               <div className="grouppage">
                 <BoxFiler groupname={this.state.groupres.groupname} groupid={this.state.groupres.groupid} boxfiler={this.state.boxfiler} boxfilerid={this.state.groupres.boxfilerid} />
                 <Mainchat groupname={this.state.groupres.groupname} groupid={this.state.groupres.groupid} wallpostid={this.state.groupres.wallpostid} mainchat={this.state.wallpost} mainchatname={this.state.groupres.groupname}/>
+                <Connections groupid={this.state.groupres.groupid} groupname={this.state.groupres.groupname} groupconnectivity={this.state.groupconnectivity}/>
               </div>
              </div>
              <this.GroupDetails groupdetails={this.state.groupdetails}/>

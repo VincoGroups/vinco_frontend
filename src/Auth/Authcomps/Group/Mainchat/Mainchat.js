@@ -43,7 +43,7 @@ class Comments extends React.Component {
                         this.state.response.map(item => (
                             <div key={this.state.response.indexOf(item)}>
                                 <div className="comment-container">
-                                <h6 className="comment d-inline-flex p-2">{item.displayname + ': ' + item.message}</h6>
+                                <h6 className={"comment-" + this.props.style +  " d-inline-flex p-2"}>{item.displayname + ': ' + item.message}</h6>
                                 </div>
                             </div>
                         ))
@@ -70,7 +70,7 @@ class Comments extends React.Component {
         <div>
         <div>
          <div className="button-small-padding">
-         <button className="plain-btn" onClick={() => {
+         <button className={"plain-btn-" + this.props.style} onClick={() => {
              if(this.state.show === false) {
                  this.setState({
                      show: true
@@ -86,7 +86,7 @@ class Comments extends React.Component {
          </div>
         </div>
        <div className="input-comment-container">
-         <input type="text" className="input-comment" name="commentinput" onChange={(e) => {
+         <input type="text" className={"input-comment-" + this.props.style} name="commentinput" onChange={(e) => {
              this.setState({
                  [e.target.name] : e.target.value
              })
@@ -135,9 +135,13 @@ class MainChatComponent extends React.Component{
             currentuser: '',
             postsres: [],
             commentinput: '',
-            response: '',
             show: false,
-            loading: true
+            loading: true,
+            postshow: false,
+            posttitle: 'PICK A TYPE OF POST',
+            question: false,
+            statment: false,
+            currentpost: ''
         }
     }
 
@@ -172,21 +176,21 @@ class MainChatComponent extends React.Component{
                          <div key={this.state.postsres.indexOf(item)}>
                            <div className="post-spacing">
                              <div className="slightshadow">
-                             <div className="post-heading">
+                             <div className={"post-heading-" + item.posttype}>
                               <div className="row">
                                <div className="col-md-10">
                                 <h6>{item.displayname}</h6>
                                </div>
-                               <div className="">
+                               <div className="col-md-2">
                                  <h6>{item.displaydate}</h6>
                                </div>
                               </div>
                              </div>
-                             <div className="post">  
+                             <div className={"post-" + item.posttype}>  
                                  <h4>{item.message}</h4>
                              </div>
-                             <div className="post-options">
-                               <Comments groupname = {this.props.groupname} groupid={this.props.groupid} postid ={item.postid} wallpostid={this.props.wallpostid}/>
+                             <div className={"post-options-" + item.posttype}>
+                               <Comments style={item.posttype} groupname = {this.props.groupname} groupid={this.props.groupid} postid ={item.postid} wallpostid={this.props.wallpostid}/>
                              </div>
                              </div>
                            </div>
@@ -215,6 +219,7 @@ class MainChatComponent extends React.Component{
             postid: generateId(67),
             message: this.state.post,
             date: new Date(),
+            posttype: this.state.currentpost,
             displaydate: date.getMonth().toString() + '/' + date.getDate() + '/' + date.getFullYear(),
         }
 
@@ -228,38 +233,129 @@ class MainChatComponent extends React.Component{
         })
         .then(() => {
             this.fetchWallposts();
-            setNotifications("createpost" , firebase.auth().currentUser.uid, firebase.auth().currentUser.displayName, this.props.groupname, this.props.groupid , this.state.post)
+            setNotifications("createpost" , firebase.auth().currentUser.uid, firebase.auth().currentUser.displayName, this.props.groupname, this.props.groupid , this.state.post);
+            this.setState({
+                postshow: false
+            })
 
         }).catch((error) => {
             console.log(error);
         })
     }
 
+    PostModal = ({postshow}) => {
+        if (postshow === true) {
+            return (
+                <div>
+                    <div className="modal-edu">
+                     <div className="container">
+                      <div className="modal-padding">
+                         <div className="modal-header-white">
+                           <span className="closebtndark" onClick={() => {
+                               this.setState({
+                                   postshow: false
+                               })
+                           }}>&times;</span>
+                           <h3>CREATE A POST</h3>
+                         </div>
+                         <div className="modal-container">
+                         <div className="float-right">
+                           <div className="row">
+                           <div className="col-xs-6">
+                             <div className="button-total-padding">
+                             <button className="button-submit" onClick={() => {
+                                 this.setState({
+                                     statment: false,
+                                     question: true,
+                                     posttitle: 'QUESTION',
+                                     currentpost:'question'
+                                 })
+                             }}>QUESTION</button>
+                             </div>
+                           </div>
+                           <div className="col-xs-6">
+                            <div className="button-total-padding">
+                            <button className="button-submit-blue" onClick={() => {
+                                this.setState({
+                                    question: false,
+                                    statment: true,
+                                    posttitle: "STATEMENT",
+                                    currentpost: "statement"
+                                })
+                            }}>STATEMENT</button>
+                            </div>
+                           </div>
+                           </div>
+                         </div>
+                         <h3>{this.state.posttitle}</h3>
+                         <div className="input-container">
+                            <div className="group">      
+                                <input type="text" className="inputbar" name="post" onChange={(e) => {
+                                    this.setState({
+                                    [e.target.name]: e.target.value
+                                    })
+                                }} onKeyDown={(e) => {
+                                    if (e.keyCode === 13) {
+                                        this.MakePost();
+                                    }
+                                }} required />
+                                <span className="highlight"></span>
+                                <span className="bar"></span>
+                                <label className="labelbar">Ask a question to your group or make a statment.</label>
+                            </div>
+                         </div>
+                         </div>
+                      </div>
+                     </div>
+                    </div>
+                </div>
+            )
+        } else {
+            return null;
+        }
+    }
+
+
+
     render() {
         console.log(this.state);
         return (
             <div>
              <div className="mainchat-component">
-              <h2>POSTS</h2>
-              <div className="input-container">
-                     <div className="group">      
-                        <input type="text" className="inputbar" name="post" onChange={(e) => {
-                            this.setState({
-                              [e.target.name]: e.target.value
-                            })
-                        }} onKeyDown={(e) => {
-                            if (e.keyCode === 13) {
-                                this.MakePost();
-                            }
-                        }} required />
-                        <span className="highlight"></span>
-                        <span className="bar"></span>
-                        <label className="labelbar">Ask a question to your group or make a statment.</label>
-                      </div>
+              <div className="row">
+                <div className="col-md-2">
+                <h2>POSTS</h2>
+                </div>
+                <div className="col-md-8">
+                    <div className="d-flex justify-content-center">
+                        <div className="sub-comp">
+                        <div className="d-flex justify-content-center">
+                        <div className="question-box"></div> 
+                        </div>
+                        <h6 className="text-center">QUESTIONS</h6>
+                        </div>
+                        <div className="sub-comp">
+                        <div className="d-flex justify-content-center">
+                        <div className="statement-box"></div> 
+                        </div>
+                        <h6 className="text-center">STATEMENTS</h6>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-2">
+                <div className="float-right">
+                    <button className="button-submit-blue" onClick={() => {
+                        this.setState({
+                            postshow: true
+                        })
+                    }}>CREATE A POST</button>
+                </div>
+                </div>
               </div>
               <this.ShowPosts/>
               <Loadingblue loading={this.state.loading}/>
              </div>
+             <this.PostModal postshow={this.state.postshow}/>
             </div>
         )
     }

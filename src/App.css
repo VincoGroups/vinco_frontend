@@ -1,21 +1,21 @@
-@import url('https://fonts.googleapis.com/css?family=Hind');
+@import url('https://fonts.googleapis.com/css?family=Nanum Gothic');
 
 .page {
   padding-top: 50px;
-  font-family: 'Hind';
+  font-family: 'Nanum Gothic';
 }
 
 .landing-page {
   padding-top: 250px;
   padding-bottom: 250px;
-  font-family: 'Hind';
+  font-family: 'Nanum Gothic';
   color: #0D47A1;
 }
 
 .NANav {
   padding: 10px;
   background-color: #0D47A1;
-  font-family: 'Hind';
+  font-family: 'Nanum Gothic';
   color: white;
   position: fixed;
   width: 100%;
@@ -55,7 +55,7 @@
   color: #0D47A1;
   background-color: transparent;
   width:100%;
-  font-family: 'Hind';
+  font-family: 'Nanum Gothic';
 }
 
 .react-autosuggest__input::placeholder {
@@ -188,7 +188,7 @@
 .AuthNav {
   padding: 10px;
   background-color: #0D47A1;
-  font-family: 'Hind';
+  font-family: 'Nanum Gothic';
   color: white;
   position: fixed;
   width: 100%;
@@ -219,8 +219,38 @@
   border-radius: 5px;
 }
 
+.button-white {
+  border-style: none;
+  background-color: white;
+  color: #82B1FF;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.button-white:hover {
+  background-color: #EEEEEE;
+}
+
 .button-submit-white:hover {
   background-color: #82B1FF;
+}
+
+.button-submit-blue {
+  border-style: none;
+  background-color: #2962FF;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.button-submit-blue:hover {
+  background-color: #448AFF;
+}
+
+.post-heading-question {
+  background-color: white;
+  color: #0D47A1;
+  padding: 15px;
 }
 
 .button-logout {
@@ -283,7 +313,7 @@
   overflow: auto; 
   background-color: rgb(0,0,0); 
   background-color: rgba(0,0,0,0.4); 
-  font-family: 'Hind'
+  font-family: 'Nanum Gothic'
 }
 
 .modal-edu-white{
@@ -310,7 +340,7 @@
   background-color: #EF5350;
   opacity: 1; 
   color: white;
-  font-family: 'Hind'
+  font-family: 'Nanum Gothic'
 }
 
 .groupcard-blue {
@@ -333,12 +363,17 @@
   background-color: white;
   color: #0D47A1;
   padding: 20px;
+  opacity: 1;
 }
 
 .modal-blue-container {
   background-color: #82B1FF;
   color: white;
   padding: 20px;
+}
+
+.thirty-padding {
+  padding: 30px;
 }
 
 .closebtndark{
@@ -435,7 +470,7 @@
   background-color: #0D47A1;
   color: white;
   padding: 10px;
-  font-family: 'Hind'
+  font-family: 'Nanum Gothic'
 }
 
 .suggest-card:hover {
@@ -445,6 +480,10 @@
 
 .button-padding {
    padding-top: 12px;
+}
+
+.button-total-padding {
+  padding: 5px;
 }
 
 .button-small-padding {
@@ -657,7 +696,7 @@
 
 .modal-header-white {
   background-color: white;
-  color: #448AFF;
+  color: #0D47A1;
   padding: 30px;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
@@ -719,6 +758,16 @@
 .pending-group-card:hover {
   background-color: #EEEEEE;
 }
+.pending-group-card-blue {
+  background: #2979FF;
+  color: white;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.pending-group-card-blue:hover {
+  background-color: #2962FF;
+}
 
 .pending-group-card-padding {
   padding: 70px;
@@ -735,18 +784,33 @@
   background-color: #BBDEFB;
 }
 
-.post {
+.post-statement {
   background-color: white;
-  color: #0D47A1;
+  color: #2962FF;
   padding-top: 20px;
   padding-right: 10px;
   padding-left: 10px;
   padding-bottom: 6px;
 }
 
-.post-heading {
+.post-question {
   background-color: #2962FF;
   color: white;
+  padding-top: 20px;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-bottom: 6px;
+}
+
+.post-heading-question {
+  background-color: #2962FF;
+  color: white;
+  padding: 10px;
+}
+
+.post-heading-statement {
+  background-color: white;
+  color:#2962FF;
   padding: 10px;
 }
 
@@ -755,12 +819,18 @@
   padding-bottom: 10px;
 }
 
-.post-options {
+.post-options-statement {
   padding: 10px;
   background-color: white;
 }
 
-.input-comment {
+.post-options-question {
+  background-color: #2962FF;
+  color: white;
+  padding: 10px;
+}
+
+.input-comment-question {
   width: 100%;
   padding-top: 5px;
   padding-bottom: 5px;
@@ -769,11 +839,38 @@
   padding-right: 10px;
   border-radius: 25px;
   border-style: solid;
-  border-color: #448AFF;
-  color: #1976D2;
+  border-color: white;
+  color: white;
+  background-color: transparent;
 }
 
-.input-comment:focus {
+.input-comment-question::placeholder {
+  color: white;
+}
+
+.input-comment-statement {
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 25px;
+  border-style: solid;
+  border-color: #2962FF;
+  color: #2962FF;
+  background-color: transparent;
+}
+
+.input-comment-statement::placeholder{
+  color: #2962FF;
+}
+
+.input-comment-statement:focus {
+  outline: none;
+}
+
+.input-comment-question:focus {
   outline: none;
 }
 
@@ -781,21 +878,34 @@
   color: #1976D2;
 }
 
-.plain-btn {
+.plain-btn-question {
   background-color: transparent;
   border-style: none;
-  color: #2979FF;
+  color: white;
 }
 
-.plain-btn:hover {
-  color: #0D47A1;
+.plain-btn-question:hover {
+  color: #E3F2FD;
+}
+
+.plain-btn-statement {
+  background-color: transparent;
+  border-style: none;
+  color: #2962FF;
 }
 
 .comment-container {
   padding: 7px;
 }
 
-.comment {
+.comment-question {
+  background-color: white;
+  color: #2962FF;
+  padding: 7px;
+  border-radius: 6px;
+}
+
+.comment-statement {
   background-color: #2962FF;
   color: white;
   padding: 7px;
@@ -884,4 +994,80 @@
   width: 100%;
   height: 400px;
   overflow: scroll;
+}
+
+.question-box {
+  width: 20px;
+  height: 20px;
+  margin: 5px;
+  background-color: #2962FF;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.statement-box {
+  width: 20px;
+  height: 20px;
+  margin: 5px;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.sub-comp {
+  padding: 5px;
+}
+
+.connections-page {
+  color: #0D47A1;
+  background-color: #EEEEEE;
+  height: 100vh;
+}
+
+.connections-container-empty {
+  padding-top: 50px;
+}
+
+.no-connections-container {
+  padding: 30px;
+  background-color: #2962FF;
+  color: white;
+}
+
+.pendingPage {
+  padding: 40px;
+  background-color: #2979FF;
+  color: white;
+  height: 100vh;
+}
+
+.connection-home {
+  padding: 30px;
+}
+
+.connection-groups {
+  padding: 40px;
+  background-color: #1976D2;
+  color: white;
+  height: 100vh;
+}
+
+.post-white-text-area {
+  width: 100%;
+  border-style: none;
+  height: 100px;
+  background-color: #2962FF;
+  color: white;
+  padding: 20px;
+}
+
+.post-white-text-area::placeholder {
+  color: white;
+}
+
+.post-option-buttons-container {
+  padding: 10px;
+  background-color: white;
+}
+
+.show-post-container {
+  padding: 20px;
 }
