@@ -253,6 +253,16 @@
   padding: 15px;
 }
 
+.post {
+  padding: 20px;
+  background-color: white;
+  color: #2979FF;
+}
+
+.post:hover {
+  background-color: #EEEEEE;
+}
+
 .button-logout {
   border-style: none;
   background-color: #D32F2F;

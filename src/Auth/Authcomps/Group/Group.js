@@ -27,7 +27,6 @@ class Group extends React.Component {
       .then((res) => {
         return res.json();
       }).then((bod) => {
-        console.log(bod);
         if (bod.userresponse === true) {
           fetch('/api/group/' + groupapi)
           .then((res) => {
@@ -212,7 +211,7 @@ class Group extends React.Component {
               <div className="grouppage">
                 <BoxFiler groupname={this.state.groupres.groupname} groupid={this.state.groupres.groupid} boxfiler={this.state.boxfiler} boxfilerid={this.state.groupres.boxfilerid} />
                 <Mainchat groupname={this.state.groupres.groupname} groupid={this.state.groupres.groupid} wallpostid={this.state.groupres.wallpostid} mainchat={this.state.wallpost} mainchatname={this.state.groupres.groupname}/>
-                <Connections groupid={this.state.groupres.groupid} groupname={this.state.groupres.groupname} groupconnectivity={this.state.groupconnectivity}/>
+                <Connections boxfilerid={this.state.groupres.boxfilerid} groupid={this.state.groupres.groupid} groupname={this.state.groupres.groupname} groupconnectivity={this.state.groupconnectivity}/>
               </div>
              </div>
              <this.GroupDetails groupdetails={this.state.groupdetails}/>

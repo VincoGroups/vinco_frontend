@@ -9,14 +9,80 @@ class Connection extends React.Component {
     this.state = {
       res: [],
       postconnections: false,
-      connectionpost: ''
+      connectionpost: '',
+      openfilemodal: false,
+      boxfilerres: [],
+      inputfile: '',
+      inputfolderid: '',
+      inputfileid: '',
+      postres: []
     }
+  }
+
+  fetchPosts = () => {
+    setTimeout(() => {
+     fetch('/connection/getposts/' + this.state.res.connectionid)
+     .then((res) => {
+       return res.json();
+     }).then((bod) => {
+       this.setState({
+        postres: bod
+       })
+     }).catch((error) => {
+       console.log(error);
+     })
+    }, 490);
   }
 
   componentDidMount() {
     this.setState({
       res: this.props.details
     })
+    
+    this.fetchPosts();
+
+    setTimeout(() => {
+      fetch('/api/boxfiler/getfolders/' + this.props.groupid + '/' + this.props.boxfilerid)
+      .then((res) => {
+        return res.json();
+      }).then((body) => {
+        this.setState({
+          boxfilerres: body
+        })
+      }).catch((error) => {
+        console.log(error);
+      })
+    }, 500);
+  }
+
+  ShowAllPosts = () => {
+    return (
+      <div>
+        {
+          this.state.postres.map(item => (
+            <div key={this.state.postres.indexOf(item)}>
+              <div className="post-spacing">
+               <div className="slightshadow">
+                <div className="post">
+                <div className="row">
+                  <div className="col-md-10">
+                   <h6>{item.displayName}</h6>
+                  </div>
+                  <div className="col-md-2">
+                   <h6>{item.date}</h6>
+                  </div>
+                </div>
+                <div className="title-padding">
+                 <h4>{item.message}</h4>
+                </div>
+                </div>
+               </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    )
   }
 
   PostModalConnection = ({postconnections}) => {
@@ -48,11 +114,44 @@ class Connection extends React.Component {
                    </div>
                    <div className="col-md-7">
                     <div className="justify-content-center">
-                    <button className="plain-btn-statement">CHOOSE FILE FROM FOLDER</button>
+                    <button className="plain-btn-statement" onClick={() => {
+                      this.setState({
+                        openfilemodal: true
+                      })
+                    }}>CHOOSE FILE FROM FOLDER</button>
                     </div>
                    </div>
                    <div className="col-md-2">
-                   <button className="button-submit-blue">POST</button>
+                   <button className="button-submit-blue" onClick={() => {
+                     const data = {
+                       message: this.state.connectionpost,
+                       file: this.state.inputfile,
+                       postid: generateId(79),
+                       creator: firebase.auth().currentUser.uid,
+                       displayName: firebase.auth().currentUser.displayName,
+                       date: new Date().getMonth() + '/' + new Date().getDate() + '/' + new Date().getFullYear()  + ' ' + new Date().getHours() + ':' + new Date().getMinutes(),
+                       servertimestamp: new Date(),
+                       fileboxfilerid: this.props.boxfilerid,
+                       groupid: this.props.groupid,
+                       fileid: this.state.inputfileid
+                     }
+
+                     
+                     fetch('/connection/makepost/' + this.state.res.connectionid, {
+                       method: 'PUT',
+                       headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify(data)
+                     }).then(() => {
+                       console.log('this worked')
+                       this.fetchPosts();
+                     }).catch((error) => {
+                       console.log(error);
+                     })
+                     
+                   }}>POST</button>
                    </div>
                   </div>
                 </div>
@@ -60,6 +159,7 @@ class Connection extends React.Component {
               </div>
               <div className="show-post-container">
                 <h6>{firebase.auth().currentUser.displayName}</h6>
+                <h6>{"ATTACHED: " + this.state.inputfile}</h6>
                 <div className="input-container">
                   <h4>{this.state.connectionpost}</h4>
                 </div>  
@@ -75,19 +175,70 @@ class Connection extends React.Component {
     }
   }
 
- /*
   ModalInputFile = ({openfilemodal}) => {
     if (openfilemodal === true) {
       return (
         <div>
-
+          <div className="modal-edu">
+           <div className="container">
+            <div className="modal-padding">
+              <div className="modal-container">
+                <span className="closebtndark" onClick={() => {
+                  this.setState({
+                    openfilemodal: false
+                  })
+                }}>&times;</span>
+               <h3>CHOOSE FOLDER</h3>
+               <div className="input-container">
+                {
+                  this.state.boxfilerres.map(item => (
+                    <div key={this.state.boxfilerres.indexOf(item)}>
+                      <div className="folder-component-padding">
+                             <div className="folder-output" onClick={() => {
+                                 const foldername = document.getElementById(item.foldername);
+                                 if (foldername.classList.contains('hide') === true) {
+                                     foldername.classList.remove('hide');
+                                 } else {
+                                     foldername.classList.add('hide');
+                                 }
+                             }}>
+                                <h6 className="folder-subheader">{item.files.length + " files"}</h6>
+                                <h4>{item.foldername}</h4>
+                             </div>
+                             <div id={item.foldername} className="file-components hide">
+                              {
+                                  item.files.map(index => (
+                                      <div key={item.files.indexOf(index)}>
+                                          <div className="file-output" onClick={() => {
+                                            this.setState({
+                                              inputfile: index.filename,
+                                              openfilemodal: false,
+                                              inputfolderid: item.folderid,
+                                              inputfileid: index.fileid
+                                            })
+                                          }}>
+                                            <h6>{index.filename}</h6>
+                                          </div>
+                                      </div>
+                                  ))
+                              }
+                             </div>
+                             </div>
+                    </div>
+                  ))
+                }
+               </div>
+              </div>
+            </div>
+           </div>
+          </div>
         </div>
       )
     } else {
       return null;
     }
   }
- */
+
 
   render() {
     console.log(this.state);
@@ -102,8 +253,12 @@ class Connection extends React.Component {
            }}>MAKE A POST</button>
           </div>
           <h2>{this.state.res.requestedgroupname + ' and ' + this.state.res.connectedgroupname}</h2>
+          <div className="input-container">
+           <this.ShowAllPosts/>
+          </div>
         </div>
         <this.PostModalConnection postconnections={this.state.postconnections} />
+        <this.ModalInputFile openfilemodal={this.state.openfilemodal}/>
       </div>
     )
   }
@@ -493,7 +648,7 @@ class ConnectionPages extends React.Component {
                })
              }}>CONNECTIONS</button>
             </div>
-            <Connection details={connectiondetails}/>
+            <Connection groupid={this.props.groupid} boxfilerid={this.props.boxfilerid} details={connectiondetails}/>
           </div>
         </div>
       )
@@ -516,12 +671,12 @@ class ConnectionPages extends React.Component {
 }
 
 
-const Connections = ({groupconnectivity , groupname , groupid}) => {
+const Connections = ({groupconnectivity , groupname , groupid , boxfilerid}) => {
   if (groupconnectivity === true) {
     return (
       <div>
         <div className="connections-page">
-          <ConnectionPages groupname={groupname} groupid={groupid}/>
+          <ConnectionPages boxfilerid={boxfilerid} groupname={groupname} groupid={groupid}/>
         </div>
       </div>
     )
