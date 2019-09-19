@@ -3,6 +3,92 @@ import LoadingBlue from '../../../../NonAuth/Comps/Loadingblue';
 import generateId from '../../../../ServerSide/generate';
 import firebase from '../../../../ServerSide/basefile';
 
+class ConnectionComments extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      res: [],
+      comment: ''
+    }
+  }
+
+  fetchComments = () => {
+    setTimeout(() => {
+      fetch('/connection/getcomments/' + this.props.connectionid + '/' + this.props.postid)
+      .then((res) => {
+        return res.json();
+      }).then((bod) => {
+        this.setState({
+          res: bod
+        })
+      }).catch((error) => {
+        console.log(error);
+      })
+    }, 400);
+  }
+
+  componentDidMount() {
+    this.fetchComments();
+  }
+
+  ShowCommentsOnPost = () => {
+    return (
+      <div>
+        <div className="input-container">
+        {
+          this.state.res.map(item => (
+            <div key={this.state.res.indexOf(item)}>
+              <div className="comment-container">
+                <h6 className="comment d-inline-flex p-2">{item.displayname + ': ' + item.message}</h6>
+              </div>
+            </div>
+          ))
+        }
+        </div>
+      </div>
+    )
+  }
+
+
+  render() {
+    return (
+      <div>
+        <div className="input-container">
+        <input type="text" className="input-comment-blue" placeholder="Comment here..." name="comment" onChange={(e) => {
+          this.setState({
+            [e.target.name]: e.target.value
+          })
+        }} onKeyDown={(e) => {
+          if (e.keyCode === 13) {
+            const data = {
+              commentid: generateId(70),
+              displayname: firebase.auth().currentUser.displayName,
+              message: this.state.comment,
+              creator: firebase.auth().currentUser.uid,
+              date: new Date()
+            }
+            
+            fetch("/connection/comment/" + this.props.connectionid + '/' + this.props.postid , {
+              method: 'PUT',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+            }).then(() => {
+              this.fetchComments();
+            }).catch((error) => {
+              console.log(error);
+            })
+          }
+        }}/>
+        <this.ShowCommentsOnPost/>
+        </div>
+      </div>
+    )
+  }
+}
+
 class Connection extends React.Component {
   constructor(props) {
     super(props);
@@ -15,7 +101,10 @@ class Connection extends React.Component {
       inputfile: '',
       inputfolderid: '',
       inputfileid: '',
-      postres: []
+      inputfileurl: '',
+      postres: [],
+      currentpost: [],
+      postmodal: false
     }
   }
 
@@ -55,39 +144,8 @@ class Connection extends React.Component {
     }, 500);
   }
 
-  ShowAllPosts = () => {
-    return (
-      <div>
-        {
-          this.state.postres.map(item => (
-            <div key={this.state.postres.indexOf(item)}>
-              <div className="post-spacing">
-               <div className="slightshadow">
-                <div className="post">
-                <div className="row">
-                  <div className="col-md-10">
-                   <h6>{item.displayName}</h6>
-                  </div>
-                  <div className="col-md-2">
-                   <h6>{item.date}</h6>
-                  </div>
-                </div>
-                <div className="title-padding">
-                 <h4>{item.message}</h4>
-                </div>
-                </div>
-               </div>
-              </div>
-            </div>
-          ))
-        }
-      </div>
-    )
-  }
-
   PostModalConnection = ({postconnections}) => {
     if (postconnections === true) {
-      console.log('hey hbh')
       return (
         <div>
           <div className="modal-edu">
@@ -133,7 +191,8 @@ class Connection extends React.Component {
                        servertimestamp: new Date(),
                        fileboxfilerid: this.props.boxfilerid,
                        groupid: this.props.groupid,
-                       fileid: this.state.inputfileid
+                       fileid: this.state.inputfileid,
+                       fileurl: this.state.inputfileurl
                      }
 
                      
@@ -147,6 +206,9 @@ class Connection extends React.Component {
                      }).then(() => {
                        console.log('this worked')
                        this.fetchPosts();
+                       this.setState({
+                         openfilemodal: false
+                       })
                      }).catch((error) => {
                        console.log(error);
                      })
@@ -174,6 +236,117 @@ class Connection extends React.Component {
       return null;
     }
   }
+
+  PostModal = ({postmodal, details}) => {
+    if (postmodal === true) {
+      if (details.fileurl === "") {
+        return (
+          <div>
+            <div className="modal-edu">
+             <div className="container">
+              <div className="modal-padding">
+               <div className="modal-container">
+                <span className="closebtndark" onClick={() => {
+                  this.setState({
+                    postmodal: false
+                  })
+                }}>&times;</span>
+                <h6>{details.displayName}</h6>
+                <div className="title-padding">
+                 <h4>{details.message}</h4>
+                 <ConnectionComments connectionid={this.state.res.connectionid} postid={this.state.currentpost.postid}/>
+                </div>
+               </div>
+              </div>
+             </div>
+            </div>
+          </div>
+        )
+      } else {
+        return (
+          <div>
+            <div className="modal-edu">
+             <div className="container">
+              <div className="modal-padding">
+               <div className="modal-container">
+                 <span className="closebtndark" onClick={() => {
+                   this.setState({
+                     postmodal: false
+                   })
+                 }}>&times;</span>
+                  <div className="row">
+                    <div className="col-md-8">
+                     <img src={details.fileurl} alt={details.filename} className="postimg"/>
+                    </div>
+                    <div className="col-md-4">
+                     <ConnectionComments connectionid={this.state.res.connectionid} postid={this.state.currentpost.postid} />
+                    </div>
+                  </div>
+               </div>
+              </div>
+             </div>
+            </div>
+          </div>
+        )
+      }
+    } else {
+      return null
+    }
+  }
+
+  ShowAllPosts = () => {
+    const ImageIncluded = ({fileurl}) => {
+        if (fileurl !== '') {
+          return (
+            <div>
+              <h5>FILE INCLUDED</h5>
+            </div>
+          )
+        } else {
+          return null
+        }
+      }
+  
+      return (
+        <div>
+          {
+            this.state.postres.map(item => (
+              <div key={this.state.postres.indexOf(item)}>
+                <div className="post-spacing">
+                 <div className="slightshadow">
+                  <div className="post"  onClick={() => {
+                      this.setState({
+                        currentpost: item,
+                        postmodal: true
+                      })
+                    }}>
+                  <div className="row">
+                    <div className="col-md-10">
+                     <h6>{item.displayName}</h6>
+                    </div>
+                    <div className="col-md-2">
+                     <h6>{item.date}</h6>
+                    </div>
+                  </div>
+                  <div className="title-padding">
+                   <div className="row">
+                     <div className="col-md-10">
+                     <h4>{item.message}</h4>
+                     </div>
+                     <div className="col-md-2">
+                       <ImageIncluded fileurl={item.fileurl}/>
+                     </div>
+                   </div>
+                  </div>
+                  </div>
+                 </div>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      )
+    }
 
   ModalInputFile = ({openfilemodal}) => {
     if (openfilemodal === true) {
@@ -210,12 +383,20 @@ class Connection extends React.Component {
                                   item.files.map(index => (
                                       <div key={item.files.indexOf(index)}>
                                           <div className="file-output" onClick={() => {
-                                            this.setState({
-                                              inputfile: index.filename,
-                                              openfilemodal: false,
-                                              inputfolderid: item.folderid,
-                                              inputfileid: index.fileid
-                                            })
+                                            firebase.storage().ref(this.props.groupid + '/' + this.props.boxfilerid + '/' + item.folderid + '/' + index.filename)
+                                            .getDownloadURL().then((url) => {
+                                                var xhr = new XMLHttpRequest();
+                                                xhr.responseType = 'blob';       
+                                                xhr.open('GET', url);
+                                                xhr.send();
+                                                this.setState({
+                                                  inputfile: index.filename,
+                                                  openfilemodal: false,
+                                                  inputfolderid: item.folderid,
+                                                  inputfileid: index.fileid,
+                                                  inputfileurl: url
+                                                })
+                                                })
                                           }}>
                                             <h6>{index.filename}</h6>
                                           </div>
@@ -259,6 +440,7 @@ class Connection extends React.Component {
         </div>
         <this.PostModalConnection postconnections={this.state.postconnections} />
         <this.ModalInputFile openfilemodal={this.state.openfilemodal}/>
+        <this.PostModal details={this.state.currentpost} postmodal={this.state.postmodal}/>
       </div>
     )
   }
@@ -355,6 +537,7 @@ class ConnectionPages extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
+      totalload: true,
       connectionsavailable: '',
       connectionmodal: false,
       connectioninput: '',
@@ -378,6 +561,7 @@ class ConnectionPages extends React.Component {
       }).then((body) => {
         if (body.length > 0) {
           this.setState({
+            totalload: false,
             connectionsavailable: true,
             allconnections: body
           })
@@ -604,6 +788,7 @@ class ConnectionPages extends React.Component {
         <this.ConnectionsMade connectionsavailable={this.state.connectionsavailable}/>
         <this.MakeAConnectionModal connectionmodal={this.state.connectionmodal}/>
         <this.ConnectionGroupShow connectiongroup={this.state.connectiongroup} groupdetails={this.state.connectgroup}/>
+        <LoadingBlue loading={this.state.totalload}/>
         </div>
         </div>
       )
