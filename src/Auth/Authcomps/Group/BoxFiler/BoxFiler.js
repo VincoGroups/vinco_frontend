@@ -3,7 +3,7 @@ import generateId from '../../../../ServerSide/generate';
 import firebase from '../../../../ServerSide/basefile';
 import LoadingBlue from '../../../../NonAuth/Comps/Loadingblue';
 import setNotifications from '../../../../ServerSide/userfunctions/SetNotification';
-import FileView from './Fileview';
+import FileViewer from './Fileview';
 class FileComments extends React.Component {
     constructor(props) {
         super(props);
@@ -155,7 +155,7 @@ class Filer extends React.Component {
                                  <FileComments filename={currentfilename} groupid={this.props.groupid} boxfilerid={this.props.boxfilerid} currentfolderid={this.state.currentfolderid} currentfileid={this.state.currentfileid} />
                                 </div>
                                 <div className="col-md-8">
-                                 <FileView type={this.state.currentfiletype} url={this.state.url}/>
+                                 <FileViewer name={this.state.currentfilename} type={this.state.currentfiletype} url={this.state.url}/>
                                 </div>
                               </div>
                           </div>

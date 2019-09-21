@@ -11,7 +11,7 @@ class Notifications extends React.Component {
         }
     }
 
-    componentDidMount() {
+    fetchNotifications = () => {
         setTimeout(() => {
             fetch('/user/getnotifications/' + firebase.auth().currentUser.uid)
             .then((res) => {
@@ -26,17 +26,22 @@ class Notifications extends React.Component {
         } , 500)
     }
 
+    componentDidMount() {
+        this.fetchNotifications();
+    }
+
     ShowNotifications = () => {
         return (
             <div>
+              <h6>{this.state.res.length + ' Notifications'}</h6>
               <div className="notification-box">
                 {
                     this.state.res.map(item => (
                         <div key={item.notificationid}>
                          <div className="notification-padding">
-                         <div className="header-notification">
+                         <div className={"header-notification-" + item.type}>
                           <h6>{item.displaycomment}</h6>
-                          <h4>{item.extracomment}</h4>
+                          <h5>{item.extracomment}</h5>
                          </div>
                          </div>
                         </div>
@@ -82,10 +87,7 @@ class Notifications extends React.Component {
                          }}>&times;</span>
                          <h2>YOUR NOTIFICATIONS</h2>
                         </div>
-                        <div className="modal-container">
-                         <div className="row">
-                        
-                         </div>
+                        <div className="modal-container-grey">
                          <this.NotificationsShown/>
                         </div>
                        </div>
@@ -100,13 +102,18 @@ class Notifications extends React.Component {
     
 
     render () {
+        console.log(this.state);
         return (
             <div>
-              <h6 onClick={() => {
+              <div className="float-right">
+              <span className="badge">{this.state.res.length}</span>
+              </div>
+              <i className="fa fa-bell" onClick={() => {
+                  this.fetchNotifications();
                   this.setState({
                       show: true
                   })
-              }}>NOTIF</h6>
+              }}></i>
               <this.NotificationsModal show={this.state.show}/>
             </div>
         )

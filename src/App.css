@@ -344,6 +344,19 @@
   overflow: auto; 
   background-color: white;
   opacity: 1; 
+  color: #2962FF;
+}
+
+.modal-edu-white-total{
+  position: fixed; 
+  z-index: 98; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: white;
+  opacity: 100; 
   color: #0D47A1;
 }
 
@@ -379,6 +392,13 @@
 
 .modal-container {
   background-color: white;
+  color: #0D47A1;
+  padding: 20px;
+  opacity: 1;
+}
+
+.modal-container-grey {
+  background-color: #EEEEEE;
   color: #0D47A1;
   padding: 20px;
   opacity: 1;
@@ -680,6 +700,20 @@
 
 .file-output:hover {
   background-color:#82B1FF;
+}
+
+.pdffile {
+  width: 100%;
+  height: 500px;
+  border-style: none;
+  background: white;
+}
+
+.embedfile {
+  width: 100%;
+  background-color: #EEEEEE;
+  color: white;
+  height: 500px;
 }
 
 .hide {
@@ -1022,25 +1056,50 @@
   color: #0D47A1;
 }
 
+
+.badge {
+  padding-left: 9px;
+  padding-right: 9px;
+  -webkit-border-radius: 9px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
+  font-size: 6px;
+  background: #82B1FF;
+  color: white;
+  padding: 0 5px;
+  vertical-align: top;
+  margin-left: -10px; 
+}
+
 .iframebody {
  width: 100%;
  height: 500px;
 }
 
 .notification-padding {
-  padding-top: 6px;
-  padding-bottom: 6px;
+  padding: 10px;
 }
 
-.header-notification {
+.header-notification-comment {
   background-color: #2962FF;
   color: white;
-  padding: 5px;
-  border-radius: 9px;
+  padding: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
-.header-notification:hover {
+.header-notification-comment:hover {
   background-color: #2979FF;
+}
+
+.header-notification-post {
+  background-color: white;
+  color: #2979FF;
+  padding: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.header-notification-post:hover {
+  background-color: #F5F5F5;
 }
 
 .notification-box {

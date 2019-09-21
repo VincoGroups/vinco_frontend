@@ -567,6 +567,7 @@ class ConnectionPages extends React.Component {
           })
         } else {
           this.setState({
+            totalload: false,
             connectionsavailable: false
           })
         }

@@ -35,7 +35,21 @@ class Search extends React.Component {
         if (this.state.userresponse.includes(status) !== true) {
             return (
                 <div>
-                  <button className="button-submit">JOIN GROUP</button>
+                  <button onClick={() => {
+                      fetch('/api/group/putrequest/' + this.state.response.groupid + '/' + firebase.auth().currentUser.uid, {
+                          method: 'PUT',
+                          headers:{
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                          }
+                      }).then(() => {
+                          this.setState({
+                              clientgroupmodal: false
+                          })
+                      }).catch((error) => {
+                          console.log(error);
+                      })
+                  }} className="button-submit">JOIN GROUP</button>
                 </div>
             )
         } else {
@@ -108,13 +122,11 @@ class Search extends React.Component {
                          return res.json();
                      }).then((body) => {
                          this.setState({
-                             response: body
+                             response: body,
+                             clientgroupmodal: true
                          })
                      }).catch((error) => {
                          console.log(error);
-                     })
-                     this.setState({
-                         clientgroupmodal: true
                      })
                  }}>ENTER</div>
                   </div>

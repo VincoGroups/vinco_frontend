@@ -7,9 +7,12 @@
     "email-validator": "^2.0.4",
     "eslint-utils": "^1.4.1",
     "firebase": "^6.6.0",
+    "font-awesome": "^4.7.0",
+    "pdfjs": "^2.3.1",
     "react": "^16.9.0",
     "react-autosuggest": "^9.4.3",
     "react-dom": "^16.9.0",
+    "react-pdf-js": "^5.1.0",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1"
   },

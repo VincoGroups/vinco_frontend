@@ -122,9 +122,9 @@ class Comments extends React.Component {
                      console.log(bod);
                      if(bod.response === true) {
                          this.fetchComments();
-                         setNotifications("commentonpost" , firebase.auth().currentUser.uid , firebase.auth().currentUser.displayName , this.props.groupname , this.props.groupid, this.state.commentinput);
+                         setNotifications("commentonpost" , firebase.auth().currentUser.uid , firebase.auth().currentUser.displayName , this.props.groupname , this.props.groupid, this.state.commentinput, null, "comment" , this.props.groupapi);
                      }
-                 }).catch((error) => {
+                 }).catch((error) => { 
                      console.log(error);
                  })
              }
@@ -199,7 +199,7 @@ class MainChatComponent extends React.Component{
                                  <h4>{item.message}</h4>
                              </div>
                              <div className={"post-options-" + item.posttype}>
-                               <Comments style={item.posttype} groupname = {this.props.groupname} groupid={this.props.groupid} postid ={item.postid} wallpostid={this.props.wallpostid}/>
+                               <Comments groupapi={this.props.groupapi} style={item.posttype} groupname = {this.props.groupname} groupid={this.props.groupid} postid ={item.postid} wallpostid={this.props.wallpostid}/>
                              </div>
                              </div>
                            </div>
@@ -242,10 +242,15 @@ class MainChatComponent extends React.Component{
         })
         .then(() => {
             this.fetchWallposts();
-            setNotifications("createpost" , firebase.auth().currentUser.uid, firebase.auth().currentUser.displayName, this.props.groupname, this.props.groupid , this.state.post);
             this.setState({
                 postshow: false
             })
+
+            if (this.state.currentpost === "question") {
+                setNotifications("createpostquestion" , firebase.auth().currentUser.uid, firebase.auth().currentUser.displayName, this.props.groupname, this.props.groupid , this.state.post, null, "post" , this.props.groupapi);
+            } else if (this.state.currentpost === "statement") {
+                setNotifications("createpoststatement" , firebase.auth().currentUser.uid, firebase.auth().currentUser.displayName, this.props.groupname, this.props.groupid , this.state.post, null, "post" , this.props.groupapi);
+            }
 
         }).catch((error) => {
             console.log(error);
@@ -384,13 +389,13 @@ class MainChatComponent extends React.Component{
     }
 }
 
-const Mainchat = ({mainchat , groupname, groupid , wallpostid}) => {
+const Mainchat = ({mainchat , groupname, groupid , wallpostid , groupapi}) => {
     if (mainchat === true) {
         return (
             <div>
               <div className="mainchat-page">
               <div className="container">
-                <MainChatComponent groupname={groupname} groupid={groupid} wallpostid={wallpostid}/>
+                <MainChatComponent groupapi={groupapi} groupname={groupname} groupid={groupid} wallpostid={wallpostid}/>
               </div>
               </div>
             </div>

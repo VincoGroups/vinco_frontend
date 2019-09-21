@@ -1,13 +1,16 @@
 import generateId from '../generate';
 
-const setNotifications = (contenttype , uid , displayname , groupname, groupid ,input , name) => {
+const setNotifications = (contenttype , uid , displayname , groupname, groupid ,input , name , type , groupapi) => {
 
     let message; let extracomment;
     if (contenttype === "commentonpost") {
         message = displayname + ' posted a comment in ' + groupname
         extracomment = displayname + ': ' + input
-    } else if (contenttype === "createpost") {
-        message = displayname + ' made a post'
+    } else if (contenttype === "createpostquestion") {
+        message = displayname + ' posted a question in ' + groupname
+        extracomment = input
+    } else if (contenttype === "createpoststatement") {
+        message = displayname + ' posted a statement in ' + groupname
         extracomment = input
     } else if (contenttype === "createfolder") {
         message = displayname + ' made a folder named ' + input + ' in ' + groupname
@@ -27,7 +30,9 @@ const setNotifications = (contenttype , uid , displayname , groupname, groupid ,
         extracomment: extracomment,
         date: new Date(),
         notificationid: generateId(50),
-        contentype: contenttype
+        contentype: contenttype,
+        type: type,
+        groupapi: groupapi
     }
    
 

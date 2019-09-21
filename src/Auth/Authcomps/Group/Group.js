@@ -126,6 +126,17 @@ class Group extends React.Component {
                 <div className="float-right">
                   <div className={this.state.show}>
                   <button className="button-white-red" onClick={() => {
+                    fetch('/api/group/leavegroup/' + this.state.groupres.groupapi + '/' + this.state.groupres.groupid + '/' + firebase.auth().currentUser.uid , {
+                      method: 'DELETE',
+                      headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                      }
+                    }).then(() => {
+                      console.log('this user was removed')
+                    }).catch((error) => {
+                      console.log(error);
+                    })
                     
                   }}><h4>LEAVE</h4></button>
                   </div>
@@ -193,7 +204,6 @@ class Group extends React.Component {
 
 
     render() {
-      console.log(this.state);
        return (
             <div>
              <Authnav/>
@@ -245,16 +255,16 @@ class Group extends React.Component {
                     this.setState({
                       groupdetails: true
                     })
-                  }}>GROUP DETAILS</h6>
+                  }}>DETAILS</h6>
                  </div>
                 </div>
                 </div>
               </div>
               </div>
               <div className="grouppage">
-                <BoxFiler groupname={this.state.groupres.groupname} groupid={this.state.groupres.groupid} boxfiler={this.state.boxfiler} boxfilerid={this.state.groupres.boxfilerid} />
-                <Mainchat groupname={this.state.groupres.groupname} groupid={this.state.groupres.groupid} wallpostid={this.state.groupres.wallpostid} mainchat={this.state.wallpost} mainchatname={this.state.groupres.groupname}/>
-                <Connections boxfilerid={this.state.groupres.boxfilerid} groupid={this.state.groupres.groupid} groupname={this.state.groupres.groupname} groupconnectivity={this.state.groupconnectivity}/>
+                <BoxFiler groupapi={this.props.match.params.groupapi} groupname={this.state.groupres.groupname} groupid={this.state.groupres.groupid} boxfiler={this.state.boxfiler} boxfilerid={this.state.groupres.boxfilerid} />
+                <Mainchat groupapi={this.props.match.params.groupapi} groupname={this.state.groupres.groupname} groupid={this.state.groupres.groupid} wallpostid={this.state.groupres.wallpostid} mainchat={this.state.wallpost} mainchatname={this.state.groupres.groupname}/>
+                <Connections groupapi={this.props.match.params.groupapi} boxfilerid={this.state.groupres.boxfilerid} groupid={this.state.groupres.groupid} groupname={this.state.groupres.groupname} groupconnectivity={this.state.groupconnectivity}/>
               </div>
              </div>
              <this.GroupDetails groupdetails={this.state.groupdetails}/>
