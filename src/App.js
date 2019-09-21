@@ -18,18 +18,31 @@ class App extends React.Component{
     }
   }
 
+  _isMounted = false
+
   componentDidMount() {
+    this._isMounted = true
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+       if(this._isMounted) {
         this.setState({
           auth: true
         })
+       } else {
+         this.setState({
+           auth: false
+         })
+       }
       } else {
         this.setState({
           auth: false
         })
       }
     })
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false
   }
 
 

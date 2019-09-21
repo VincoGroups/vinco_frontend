@@ -78,12 +78,11 @@ class Pendinggroups extends React.Component {
                             <h4 className="text-center">{item.groupname}</h4>
                             <div className="button-padding">
                             <button className="button-submit-lightblue" onClick={() => {
-                               
                                         fetch('/api/group/addtogroup/' + item.clientid + '/' + firebase.auth().currentUser.uid)
                                         .then((res) => {
                                             return res.json()
                                         }).then(() => {
-                                            this.fetchPendingGroups()
+                                            this.props.history.push('/dash');
                                         }).catch((error) => {
                                             console.log(error)
                                         })

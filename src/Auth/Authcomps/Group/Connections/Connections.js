@@ -276,7 +276,7 @@ class Connection extends React.Component {
                  }}>&times;</span>
                   <div className="row">
                     <div className="col-md-8">
-                     <img src={details.fileurl} alt={details.filename} className="postimg"/>
+                    {/* File viewer */}
                     </div>
                     <div className="col-md-4">
                      <ConnectionComments connectionid={this.state.res.connectionid} postid={this.state.currentpost.postid} />

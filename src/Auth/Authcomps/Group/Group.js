@@ -4,6 +4,7 @@ import BoxFiler from './BoxFiler/BoxFiler';
 import Mainchat from './Mainchat/Mainchat';
 import Connections from './Connections/Connections';
 import firebase from '../../../ServerSide/basefile';
+import Addusersfilter from '../../../ServerSide/userfunctions/Addusers';
 
 class Group extends React.Component {
 
@@ -17,7 +18,8 @@ class Group extends React.Component {
             groupdetails: false,
             usersdetails: [],
             leavegroupmodal: false,
-            show: 'hide'
+            show: 'hide',
+            addusersmodal: false
        }
     }
 
@@ -55,6 +57,39 @@ class Group extends React.Component {
       }).catch((error) => {
         console.log(error);
       })
+    }
+
+    Addusers = ({addusersmodal}) => {
+      const data = {
+        clientid: this.state.groupres.clientid,
+        groupapi: this.state.groupres.groupapi,
+        groupdescription: this.state.groupres.groupdescription,
+        groupid: this.state.groupres.groupid,
+        groupname: this.state.groupres.groupname
+      }
+      if (addusersmodal === true) {
+        return (
+          <div>
+            <div className="modal-edu">
+             <div className="container">
+              <div className="modal-padding">
+               <div className="modal-container">
+                <span className="closebtndark" onClick={() => {
+                  this.setState({
+                    addusersmodal: false
+                  })
+                }}>&times;</span>
+                <h3>{"Add users to " + this.state.groupres.groupname}</h3>
+                <Addusersfilter cardstyle="suggest-card" buttonstyle="button-submit" data={data} api={this.state.groupres.groupapi}/>
+               </div>
+              </div>
+             </div>
+            </div>
+          </div>
+        )
+      } else {
+        return null;
+      }
     }
 
     LeaveGroupModal = ({leavegroupmodal}) => {
@@ -158,6 +193,7 @@ class Group extends React.Component {
 
 
     render() {
+      console.log(this.state);
        return (
             <div>
              <Authnav/>
@@ -166,18 +202,18 @@ class Group extends React.Component {
               <div className="float-right">
                 <h6>{"Hi " + firebase.auth().currentUser.displayName}</h6>
                 <div className="button-padding">
-                  <button className="button-submit" onClick={() => {
+                <button className="button-submit" onClick={() => {
                     this.setState({
-                      groupdetails: true
+                      addusersmodal: true
                     })
-                  }}>GROUP DETAILS</button>
+                  }}>ADD USERS</button>
                 </div>
               </div>
               <h4>{this.state.groupres.groupname}</h4>
               <div className="group-nav-padding">
-                <div className="float-left">
+                <div className="float-xl-left">
                 <div className="row">
-                 <div className="col-md-4">
+                 <div className="col-md-2">
                   <h6 className="text-center" onClick={() => {
                       this.setState({
                         boxfiler: false,
@@ -186,7 +222,7 @@ class Group extends React.Component {
                       })
                   }}>POSTS</h6>
                  </div>
-                 <div className="col-md-4">
+                 <div className="col-md-3">
                   <h6 className="text-center" onClick={() => {
                       this.setState({
                         boxfiler: true,
@@ -195,7 +231,7 @@ class Group extends React.Component {
                       })
                   }}>BOXFILER</h6>
                  </div>
-                 <div className="col-md-4">
+                 <div className="col-md-3">
                   <h6 className="text-center" onClick={() => {
                       this.setState({
                         boxfiler: false,
@@ -203,6 +239,13 @@ class Group extends React.Component {
                         groupconnectivity: true
                       })
                   }}>CONNECTIONS</h6>
+                 </div>
+                 <div className="col-md-4">
+                  <h6 className="text-center" onClick={() => {
+                    this.setState({
+                      groupdetails: true
+                    })
+                  }}>GROUP DETAILS</h6>
                  </div>
                 </div>
                 </div>
@@ -216,6 +259,7 @@ class Group extends React.Component {
              </div>
              <this.GroupDetails groupdetails={this.state.groupdetails}/>
              <this.LeaveGroupModal leavegroupmodal={this.state.leavegroupmodal}/>
+             <this.Addusers addusersmodal={this.state.addusersmodal}/>
             </div>
         )
     }

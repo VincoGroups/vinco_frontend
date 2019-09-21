@@ -77,7 +77,7 @@ class FileComments extends React.Component {
         console.log(this.state);
         return(
             <div>
-                <input type="text" className="input-comment" name="outputfilecomment" onChange={(e) => {
+                <input type="text" className="input-comment-blue" name="outputfilecomment" onChange={(e) => {
                   this.setState({
                     [e.target.name] : e.target.value
                   })

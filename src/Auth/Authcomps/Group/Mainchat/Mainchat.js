@@ -14,8 +14,15 @@ class Comments extends React.Component {
         }
     }
 
-    componentDidMount() {
+    _isMounted = false
+
+   componentDidMount() {
+      this._isMounted = true
       this.fetchComments();
+    }
+
+    componentWillUnmount() {
+      this._isMounted = false
     }
 
     fetchComments = () => {
@@ -25,9 +32,11 @@ class Comments extends React.Component {
             return response.json();
         }).then((body) => {
             const newbod = body.sort((a, b) => new Date(a.date) - new Date(b.date));
-            this.setState({
-                response: newbod
-            })
+            if (this._isMounted) {
+                this.setState({
+                    response: newbod
+                })
+            }
         }).catch((error) => {
             console.log(error);
         })
@@ -303,6 +312,21 @@ class MainChatComponent extends React.Component{
                                 <span className="bar"></span>
                                 <label className="labelbar">Ask a question to your group or make a statment.</label>
                             </div>
+                         </div>
+                         <div className="input-container">
+                          <div className={"post-heading-" + this.state.currentpost}>
+                            <div className="row">
+                             <div className="col-md-10">
+                              <h6>{firebase.auth().currentUser.displayName}</h6>
+                             </div>
+                             <div>
+                              <h6>{new Date().getMonth().toString() + '/' + new Date().getDate() + '/' + new Date().getFullYear()}</h6> 
+                             </div>
+                            </div>
+                            <div className={"post-" + this.state.currentpost}>
+                              <h4>{this.state.post}</h4>
+                            </div>
+                          </div>
                          </div>
                          </div>
                       </div>

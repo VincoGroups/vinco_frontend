@@ -4,12 +4,12 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.3.1",
+    "email-validator": "^2.0.4",
     "eslint-utils": "^1.4.1",
     "firebase": "^6.6.0",
     "react": "^16.9.0",
     "react-autosuggest": "^9.4.3",
     "react-dom": "^16.9.0",
-    "react-pdf": "^4.1.0",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1"
   },

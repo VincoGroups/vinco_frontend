@@ -14,12 +14,19 @@ class Login extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.setState({
+            loggedin: false
+        })
+    }
+
+
     LoginFunction = () => {
         firebase.auth().signInWithEmailAndPassword(this.state.email , this.state.password)
         .then(() => {
-            this.setState({
-                loggedin: true
-            })
+         this.setState({
+            loggedin: true
+          })
         }).catch((error) => {
             console.log(error)
         })

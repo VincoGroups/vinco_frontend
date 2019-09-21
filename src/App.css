@@ -177,6 +177,14 @@
   color: #0D47A1;
 }
 
+.color-red {
+  color: #D32F2F
+}
+
+.color-green {
+  color: #388E3C;
+}
+
 .vinco-dash {
   padding-top: 35px;
   color: white;
@@ -335,7 +343,6 @@
   height: 100%; 
   overflow: auto; 
   background-color: white;
-  background-color: rgba(0,0,0,0.4); 
   opacity: 1; 
   color: #0D47A1;
 }

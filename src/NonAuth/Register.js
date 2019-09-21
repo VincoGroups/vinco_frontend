@@ -2,6 +2,7 @@ import React from 'react';
 import Nav from './Comps/Nav';
 import firebase from '../ServerSide/basefile';
 import {Redirect} from 'react-router-dom';
+import validator from 'email-validator';
 class Register extends React.Component {
     constructor(props) {
         super(props);
@@ -11,6 +12,28 @@ class Register extends React.Component {
             email: '',
             password: '',
             loggedin: false
+        }
+    }
+
+    ShowValidEmailResponse = () => {
+        if (validator.validate(this.state.email) === true && this.state.email.length > 0) { 
+            return (
+                <div>
+                 <div className="title-padding">
+                  <h6 className="color-green">VALID EMAIL</h6>
+                 </div>
+                </div>
+            )
+        } else if (validator.validate(this.state.email) === false && this.state.email.length > 0) { 
+            return (
+                <div>
+                  <div className="title-padding">
+                  <h6 className="color-red">NOT VALID EMAIL</h6>
+                  </div>
+                </div>
+            )
+        } else {
+            return null;
         }
     }
 
@@ -62,7 +85,7 @@ class Register extends React.Component {
                 <div className="row">
                  <div className="col-md-6">
                  <div className="input-container">
-                     <div className="group">      
+                     <div className="group">   
                         <input type="text" className="inputbar" name="firstname" onChange={(e) => {
                             this.setState({
                               [e.target.name]: e.target.value
@@ -90,6 +113,7 @@ class Register extends React.Component {
                  </div>
                 </div>
                 <div className="input-container">
+                    <this.ShowValidEmailResponse/>
                      <div className="group">      
                         <input type="text" className="inputbar" name="email" onChange={(e) => {
                             this.setState({
