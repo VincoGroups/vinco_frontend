@@ -27,7 +27,7 @@ class Comments extends React.Component {
 
     fetchComments = () => {
         setTimeout(() => {
-        fetch('/wallpostapi/getcomments/' + this.props.groupid + '/' + this.props.wallpostid + '/' + this.props.postid)
+        fetch('/wallpostapi/getcomments/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.wallpostid + '/' + this.props.postid)
         .then((response) => {
             return response.json();
         }).then((body) => {
@@ -40,7 +40,7 @@ class Comments extends React.Component {
         }).catch((error) => {
             console.log(error);
         })
-        } , 400)
+        } , 500)
       }
 
       ShowCommentOuptput = ({show}) => {
@@ -109,7 +109,7 @@ class Comments extends React.Component {
                      date: new Date()
                  }
          
-                 fetch('/wallpostapi/comment/' + this.props.groupid + '/' + this.props.wallpostid + '/' + this.props.postid , {
+                 fetch('/wallpostapi/comment/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.wallpostid + '/' + this.props.postid , {
                     method: 'POST',
                     headers: {
                      'Accept': 'application/json',
@@ -119,7 +119,6 @@ class Comments extends React.Component {
                  }).then((res) => {
                      return res.json();
                  }).then((bod) => {
-                     console.log(bod);
                      if(bod.response === true) {
                          this.fetchComments();
                          setNotifications("commentonpost" , firebase.auth().currentUser.uid , firebase.auth().currentUser.displayName , this.props.groupname , this.props.groupid, this.state.commentinput, null, "comment" , this.props.groupapi);
@@ -160,7 +159,7 @@ class MainChatComponent extends React.Component{
 
    fetchWallposts = () => {
     setTimeout(() => {
-    fetch('/wallpostapi/getposts/' + this.props.groupid + '/' + this.props.wallpostid)
+    fetch('/wallpostapi/getposts/'+ this.props.grouptype + '/' + this.props.groupid + '/' + this.props.wallpostid)
     .then((res) => {
         return res.json();
     }).then((bod) => {
@@ -199,7 +198,7 @@ class MainChatComponent extends React.Component{
                                  <h4>{item.message}</h4>
                              </div>
                              <div className={"post-options-" + item.posttype}>
-                               <Comments groupapi={this.props.groupapi} style={item.posttype} groupname = {this.props.groupname} groupid={this.props.groupid} postid ={item.postid} wallpostid={this.props.wallpostid}/>
+                               <Comments grouptype={this.props.grouptype} groupapi={this.props.groupapi} style={item.posttype} groupname = {this.props.groupname} groupid={this.props.groupid} postid ={item.postid} wallpostid={this.props.wallpostid}/>
                              </div>
                              </div>
                            </div>
@@ -232,7 +231,7 @@ class MainChatComponent extends React.Component{
             displaydate: date.getMonth().toString() + '/' + date.getDate() + '/' + date.getFullYear(),
         }
 
-        fetch('/wallpostapi/makepost/' + this.props.groupid + '/' + this.props.wallpostid, {
+        fetch('/wallpostapi/makepost/'+ this.props.grouptype + '/' + this.props.groupid + '/' + this.props.wallpostid, {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -389,13 +388,13 @@ class MainChatComponent extends React.Component{
     }
 }
 
-const Mainchat = ({mainchat , groupname, groupid , wallpostid , groupapi}) => {
+const Mainchat = ({mainchat , grouptype ,groupname, groupid , wallpostid , groupapi}) => {
     if (mainchat === true) {
         return (
             <div>
               <div className="mainchat-page">
               <div className="container">
-                <MainChatComponent groupapi={groupapi} groupname={groupname} groupid={groupid} wallpostid={wallpostid}/>
+                <MainChatComponent grouptype={grouptype} groupapi={groupapi} groupname={groupname} groupid={groupid} wallpostid={wallpostid}/>
               </div>
               </div>
             </div>

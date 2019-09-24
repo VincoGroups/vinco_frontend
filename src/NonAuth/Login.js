@@ -2,6 +2,7 @@ import React from 'react';
 import Nav from './Comps/Nav';
 import firebase from '../ServerSide/basefile';
 import {Redirect} from 'react-router-dom';
+import {SecurityConfig , DecodeConfig} from '../Security/Encryption';
 
 class Login extends React.Component {
 
@@ -21,8 +22,9 @@ class Login extends React.Component {
     }
 
 
-    LoginFunction = () => {
-        firebase.auth().signInWithEmailAndPassword(this.state.email , this.state.password)
+    LoginFunction = (e) => {
+        e.preventDefault();
+        firebase.auth().signInWithEmailAndPassword(DecodeConfig(this.state.email) , DecodeConfig(this.state.password))
         .then(() => {
          this.setState({
             loggedin: true
@@ -49,7 +51,7 @@ class Login extends React.Component {
                      <div className="group">      
                         <input type="text" className="inputbar" name="email" onChange={(e) => {
                             this.setState({
-                              [e.target.name]: e.target.value
+                              [e.target.name]: SecurityConfig(e.target.value)
                             })
                         }} required />
                         <span className="highlight"></span>
@@ -61,7 +63,7 @@ class Login extends React.Component {
                      <div className="group">      
                         <input type="password" className="inputbar" name="password" onChange={(e) => {
                             this.setState({
-                              [e.target.name]: e.target.value
+                              [e.target.name]: SecurityConfig(e.target.value)
                             })
                         }} required />
                         <span className="highlight"></span>

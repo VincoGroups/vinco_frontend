@@ -131,7 +131,7 @@ class Connection extends React.Component {
     this.fetchPosts();
 
     setTimeout(() => {
-      fetch('/api/boxfiler/getfolders/' + this.props.groupid + '/' + this.props.boxfilerid)
+      fetch('/api/boxfiler/getfolders/' + this.props.grouptype  + '/' + this.props.groupid + '/' + this.props.boxfilerid)
       .then((res) => {
         return res.json();
       }).then((body) => {
@@ -482,9 +482,7 @@ class PendingConnections extends React.Component {
               <div className="group-spacing">
                 <div className="pending-group-card slightshadow">
                 <span className="details" onClick={() => {
-                  this.setState({
-
-                  })
+                  console.log('we are working on it')
                 }}></span>
                 <div className="pending-group-card-padding">
                   <h4 className="text-center">{item.requestedgroupname}</h4>
@@ -549,7 +547,8 @@ class ConnectionPages extends React.Component {
       groupconnections: false,
       connectionhome: true,
       allconnections: [],
-      currentconnectiondetails: []
+      currentconnectiondetails: [],
+      errormessage: ''
     }
   }
 
@@ -615,7 +614,6 @@ class ConnectionPages extends React.Component {
                   connectedgroupname: groupdetails.groupname
                 }
 
-                console.log(data);
                
                 
                 fetch('/connection/requestconnection/' + this.props.groupid + '/' + data.connectedgroupid, {
@@ -659,12 +657,16 @@ class ConnectionPages extends React.Component {
                <span className="closebtnwhite" onClick={() => {
                  this.setState({
                    connectionmodal: false,
+                   errormessage: ''
                  })
                }}>&times;</span>
                <div className="thirty-padding">
                 <h3>SEARCH THE GROUP YOU WANT CONNECT WITH</h3>
                 <h6>Use a group code to find the group to connect with</h6>
                 <div className="input-container">
+                <div className="error-message">
+                <h6>{this.state.errormessage}</h6>
+                </div>
                 <div className="group">      
                                 <input type="text" className="inputbar-white" name="connectioninput" onChange={(e) => {
                                     this.setState({
@@ -681,6 +683,7 @@ class ConnectionPages extends React.Component {
                  </div>
                  <div className="button-padding">
                   <button className="button-white" onClick={() => {
+                   if (this.state.connectioninput !== this.props.groupclientid) {
                     fetch('/connection/getgroup/' + this.state.connectioninput)
                     .then((res) => {
                       return res.json()
@@ -688,7 +691,8 @@ class ConnectionPages extends React.Component {
                        this.setState({
                          connectiongroup: true,
                          loadingconnectiongroup: true,
-                         connectionmodal: false
+                         connectionmodal: false,
+                         errormessage: ''
                        })
 
                        setTimeout(() => {
@@ -701,6 +705,11 @@ class ConnectionPages extends React.Component {
                     }).catch((error) => {
                       console.log(error)
                     })
+                   } else {
+                     this.setState({
+                       errormessage: 'You can not connect with your own group'
+                     })
+                   }
                   }}>SEARCH</button>
                  </div>
                 </div>
@@ -857,12 +866,12 @@ class ConnectionPages extends React.Component {
 }
 
 
-const Connections = ({groupconnectivity , groupname , groupid , boxfilerid}) => {
+const Connections = ({groupconnectivity , grouptype ,groupclientid ,groupname , groupid , boxfilerid}) => {
   if (groupconnectivity === true) {
     return (
       <div>
         <div className="connections-page">
-          <ConnectionPages boxfilerid={boxfilerid} groupname={groupname} groupid={groupid}/>
+          <ConnectionPages grouptype={grouptype} groupclientid={groupclientid} boxfilerid={boxfilerid} groupname={groupname} groupid={groupid}/>
         </div>
       </div>
     )

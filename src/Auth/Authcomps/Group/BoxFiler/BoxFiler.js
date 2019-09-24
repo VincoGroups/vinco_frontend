@@ -19,7 +19,7 @@ class FileComments extends React.Component {
 
      fetchFileComments = () => {
         setTimeout(() => {
-            fetch('/api/boxfiler/getfilecomments/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + this.props.currentfolderid + '/' + this.props.currentfileid)
+            fetch('/api/boxfiler/getfilecomments/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + this.props.currentfolderid + '/' + this.props.currentfileid)
         .then((res) => {
             return res.json();
         }).then((bod) => {
@@ -41,7 +41,7 @@ class FileComments extends React.Component {
             commentid: generateId(54)
         }
 
-        fetch('/api/boxfiler/commentonfile/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + this.props.currentfolderid + '/' + this.props.currentfileid , {
+        fetch('/api/boxfiler/commentonfile/'  + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + this.props.currentfolderid + '/' + this.props.currentfileid , {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -121,7 +121,7 @@ class Filer extends React.Component {
 
      fetchFolders = () => {
         setTimeout(() => {
-            fetch('/api/boxfiler/getfolders/' + this.props.groupid + '/' + this.props.boxfilerid)
+            fetch('/api/boxfiler/getfolders/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.boxfilerid)
         .then((res) => {
             return res.json()
         }).then((bod) => {
@@ -138,6 +138,7 @@ class Filer extends React.Component {
      
 
      OutputFiler = ({outputfile , url, currentfilename}) => {    
+        
         if (outputfile === true) {
             return (
                 <div>
@@ -152,7 +153,7 @@ class Filer extends React.Component {
                               <h3>{currentfilename}</h3>
                               <div className="row">
                                 <div className="col-md-4">
-                                 <FileComments filename={currentfilename} groupid={this.props.groupid} boxfilerid={this.props.boxfilerid} currentfolderid={this.state.currentfolderid} currentfileid={this.state.currentfileid} />
+                                 <FileComments grouptype = {this.props.grouptype} filename={currentfilename} groupid={this.props.groupid} boxfilerid={this.props.boxfilerid} currentfolderid={this.state.currentfolderid} currentfileid={this.state.currentfileid} />
                                 </div>
                                 <div className="col-md-8">
                                  <FileViewer name={this.state.currentfilename} type={this.state.currentfiletype} url={this.state.url}/>
@@ -203,7 +204,7 @@ class Filer extends React.Component {
                                   filedata: filedata
                               }
                               
-                              fetch('/api/boxfiler/addfiles/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + data.folderid, {
+                              fetch('/api/boxfiler/addfiles/'  + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + data.folderid, {
                                   method: 'POST',
                                   headers: {
                                     'Accept': 'application/json',
@@ -259,7 +260,7 @@ class Filer extends React.Component {
                                       filedata: filedata
                                   }
                                   
-                                  fetch('/api/boxfiler/addfiles/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + data.folderid, {
+                                  fetch('/api/boxfiler/addfiles/'  + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + data.folderid, {
                                       method: 'POST',
                                       headers: {
                                         'Accept': 'application/json',
@@ -435,7 +436,7 @@ class Filer extends React.Component {
                                   filedata: filedata
                               }
                               
-                              fetch('/api/boxfiler/createfolder/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + data.folderid, {
+                              fetch('/api/boxfiler/createfolder/'  + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + data.folderid, {
                                   method: 'POST',
                                   headers: {
                                     'Accept': 'application/json',
@@ -497,7 +498,7 @@ class Filer extends React.Component {
                                       filedata: filedata
                                   }
                                   
-                                  fetch('/api/boxfiler/createfolder/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + data.folderid, {
+                                  fetch('/api/boxfiler/createfolder/'  + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + data.folderid, {
                                       method: 'POST',
                                       headers: {
                                         'Accept': 'application/json',
@@ -568,12 +569,12 @@ class Filer extends React.Component {
     }
 }
 
-const BoxFiler = ({boxfiler , groupname ,groupid, boxfilerid}) => {
+const BoxFiler = ({boxfiler , grouptype, groupname ,groupid, boxfilerid}) => {
     if (boxfiler === true) {
         return (
           <div>
              <div className="folders-container">
-                 <Filer groupname={groupname} groupid={groupid} boxfilerid={boxfilerid}/>
+                 <Filer grouptype={grouptype} groupname={groupname} groupid={groupid} boxfilerid={boxfilerid}/>
              </div>
           </div>
         )

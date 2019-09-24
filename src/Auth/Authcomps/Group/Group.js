@@ -5,6 +5,7 @@ import Mainchat from './Mainchat/Mainchat';
 import Connections from './Connections/Connections';
 import firebase from '../../../ServerSide/basefile';
 import Addusersfilter from '../../../ServerSide/userfunctions/Addusers';
+import Subgroup from './Subgroups/Subgrouphome';
 
 class Group extends React.Component {
 
@@ -15,11 +16,13 @@ class Group extends React.Component {
             boxfiler: false,
             wallpost: true,
             groupconnectivity: false,
+            subcomp: false,
             groupdetails: false,
             usersdetails: [],
             leavegroupmodal: false,
             show: 'hide',
-            addusersmodal: false
+            addusersmodal: false,
+            subgroups: false
        }
     }
 
@@ -37,6 +40,16 @@ class Group extends React.Component {
               this.setState({
                   groupres: bod
               })
+          }).then(() => {
+            if (this.state.groupres.typeofgroup === "ORGANIZATIONALGROUPS") {
+              this.setState({
+                subgroups: true
+              })
+            } else {
+              this.setState({
+                subgroups: false
+              })
+            }
           }).then(() => {
             this.state.groupres.users.forEach((item) => {
               fetch('/api/group/getusers/' + item)
@@ -202,8 +215,28 @@ class Group extends React.Component {
       }
     }
 
+    SubGroupNav = ({subgroups}) => {
+      if (subgroups === true) {
+        return (
+          <div>
+             <h6 className="text-center" onClick={() => {
+             this.setState({
+              boxfiler: false,
+              wallpost: false,
+              groupconnectivity: false,
+              subcomp: true,
+              })
+            }}>SUBGROUPS</h6>
+          </div>
+        )
+      } else {
+        return null;
+      }
+    }
+
 
     render() {
+      console.log(this.state);
        return (
             <div>
              <Authnav/>
@@ -228,7 +261,8 @@ class Group extends React.Component {
                       this.setState({
                         boxfiler: false,
                         wallpost: true,
-                        groupconnectivity: false
+                        groupconnectivity: false,
+                        subcomp: false
                       })
                   }}>POSTS</h6>
                  </div>
@@ -237,7 +271,8 @@ class Group extends React.Component {
                       this.setState({
                         boxfiler: true,
                         wallpost: false,
-                        groupconnectivity: false
+                        groupconnectivity: false,
+                        subcomp: false,
                       })
                   }}>BOXFILER</h6>
                  </div>
@@ -246,25 +281,47 @@ class Group extends React.Component {
                       this.setState({
                         boxfiler: false,
                         wallpost: false,
-                        groupconnectivity: true
+                        groupconnectivity: true,
+                        subcomp: false,
                       })
                   }}>CONNECTIONS</h6>
                  </div>
                  <div className="col-md-4">
-                  <h6 className="text-center" onClick={() => {
-                    this.setState({
-                      groupdetails: true
-                    })
-                  }}>DETAILS</h6>
+                  <this.SubGroupNav subgroups={this.state.subgroups}/>
                  </div>
                 </div>
                 </div>
               </div>
               </div>
               <div className="grouppage">
-                <BoxFiler groupapi={this.props.match.params.groupapi} groupname={this.state.groupres.groupname} groupid={this.state.groupres.groupid} boxfiler={this.state.boxfiler} boxfilerid={this.state.groupres.boxfilerid} />
-                <Mainchat groupapi={this.props.match.params.groupapi} groupname={this.state.groupres.groupname} groupid={this.state.groupres.groupid} wallpostid={this.state.groupres.wallpostid} mainchat={this.state.wallpost} mainchatname={this.state.groupres.groupname}/>
-                <Connections groupapi={this.props.match.params.groupapi} boxfilerid={this.state.groupres.boxfilerid} groupid={this.state.groupres.groupid} groupname={this.state.groupres.groupname} groupconnectivity={this.state.groupconnectivity}/>
+                <BoxFiler 
+                grouptype={this.state.groupres.typeofgroup} 
+                groupapi={this.props.match.params.groupapi} 
+                groupname={this.state.groupres.groupname}
+                groupid={this.state.groupres.groupid} 
+                boxfiler={this.state.boxfiler} 
+                boxfilerid={this.state.groupres.boxfilerid} />
+                <Mainchat 
+                grouptype={this.state.groupres.typeofgroup} 
+                groupapi={this.props.match.params.groupapi} 
+                groupname={this.state.groupres.groupname} 
+                groupid={this.state.groupres.groupid} 
+                wallpostid={this.state.groupres.wallpostid} 
+                mainchat={this.state.wallpost} 
+                mainchatname={this.state.groupres.groupname}/>
+                <Connections 
+                grouptype={this.state.groupres.typeofgroup}
+                groupapi={this.props.match.params.groupapi} 
+                boxfilerid={this.state.groupres.boxfilerid} 
+                groupid={this.state.groupres.groupid} 
+                groupname={this.state.groupres.groupname} 
+                groupconnectivity={this.state.groupconnectivity}
+                groupclientid={this.state.groupres.clientid}
+                />
+                <Subgroup
+                subgroupcomp={this.state.subcomp}
+                groupname={this.state.groupres.groupname}
+                />
               </div>
              </div>
              <this.GroupDetails groupdetails={this.state.groupdetails}/>

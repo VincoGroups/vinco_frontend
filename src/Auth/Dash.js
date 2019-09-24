@@ -5,6 +5,7 @@ import firebase from '../ServerSide/basefile';
 import generateId from '../ServerSide/generate';
 import LoadingWhite from '../NonAuth/Comps/Loadingwhite';
 
+
 class Dash extends React.Component {
     constructor(props) {
         super(props);
@@ -17,11 +18,13 @@ class Dash extends React.Component {
             currentuser: '',
             suggestions: [],
             allusers: [],
-            loading: true
+            loading: true,
+            typeofgroup: 'BASICGROUPS'
         }
     }
 
     fetchUserGroups = () => {
+       setTimeout(() => {
         fetch('/api/group/getgroups/' + firebase.auth().currentUser.uid)
         .then((res) => {
             return res.json();
@@ -33,14 +36,15 @@ class Dash extends React.Component {
         }).catch((error) => {
             console.log(error)
         })
+       }, 500);
     }
 
-    async componentDidMount() {
+     componentDidMount() {
         this.setState({
             loading: true,
             currentuser: firebase.auth().currentUser.uid
         })
-        await this.fetchUserGroups();
+       this.fetchUserGroups();
 
       fetch('/user/getallusers')
         .then((res) => {
@@ -86,7 +90,23 @@ class Dash extends React.Component {
         )
     }
 
+
     ModalCreate = ({modalopened}) => {
+        const ShowGroupTitleOnCreate = () => {
+            if (this.state.groupname.length > 0) {
+                return (
+                    <div>
+                     <h4>{"What kind of group is " + this.state.groupname + "?"}</h4>
+                    </div>
+                )
+            } else {
+                return (
+                    <div>
+                     <h4>What kind of group is this ?</h4>
+                    </div>
+                )
+            }
+        }
         if (modalopened === true) {
             return (
                 <div>
@@ -125,6 +145,27 @@ class Dash extends React.Component {
                             </div>
                         </div>
                         <div className="input-container">
+                          <ShowGroupTitleOnCreate/>
+                          <div className="small-input-container">
+                            <div className="select-group">
+                            <select className="select-bar" name="typeofgroup" onChange={(e) => {
+                                if(e.target.value === "Basic Group") {
+                                    this.setState({
+                                        [e.target.name] : "BASICGROUPS"
+                                    })
+                                } else if (e.target.value === "Organizational Group") {
+                                    this.setState({
+                                        [e.target.name] : "ORGANIZATIONALGROUPS"
+                                    })
+                                }
+                            }}>
+                             <option value="Basic Group">Basic Group</option>
+                             <option value="Organizational Group">Organizational Group</option>
+                            </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="input-container">
                             <div className="group">      
                                 <input type="text" className="inputbar" name="searchvalue" onChange={(e) => {
                                     let suggestions = [];
@@ -144,23 +185,47 @@ class Dash extends React.Component {
                             {this.renderSuggestions()}
                         </div>
                         <div className="input-container">
-                            <div className="longbutton text-center" onClick={() => {
+                            <button disabled={!this.state.groupname && !this.state.groupdescription} className="button-submit" onClick={(e) => {
                                 const users = [];
                                 users.push(this.state.currentuser);
-                                const data = {
-                                    groupid: generateId(102),
-                                    clientid: generateId(30),
-                                    boxfilerid: generateId(99),
-                                    wallpostid: generateId(97),
-                                    groupname: this.state.groupname,
-                                    groupdescription: this.state.groupdescription,
-                                    usersadded: this.state.usersadded,
-                                    creator: this.state.currentuser,
-                                    groupapi: generateId(36),
-                                    users: users
+                                const adminusers = [];
+                                adminusers.push(this.state.currentuser);
+                                let data;
+                                if (this.state.typeofgroup === "BASICGROUPS") {
+                                    data = {
+                                        groupid: generateId(200),
+                                        clientid: generateId(30),
+                                        boxfilerid: generateId(150),
+                                        wallpostid: generateId(151),
+                                        groupname: this.state.groupname,
+                                        groupdescription: this.state.groupdescription,
+                                        usersadded: this.state.usersadded,
+                                        creator: this.state.currentuser,
+                                        groupapi: generateId(45) + "b",
+                                        typeofgroup: this.state.typeofgroup,
+                                        adminusers: adminusers,
+                                        users: users
+                                    }
+                                } else if (this.state.typeofgroup === "ORGANIZATIONALGROUPS") {
+                                    data = {
+                                        groupid: generateId(200),
+                                        clientid: generateId(30),
+                                        boxfilerid: generateId(99),
+                                        wallpostid: generateId(97),
+                                        groupname: this.state.groupname,
+                                        groupdescription: this.state.groupdescription,
+                                        usersadded: this.state.usersadded,
+                                        creator: this.state.currentuser,
+                                        groupapi: generateId(45) + "o",
+                                        subcomponentsid: generateId(47),
+                                        typeofgroup: this.state.typeofgroup,
+                                        adminusers: adminusers,
+                                        users: users                                    
+                                    }
                                 }
-  
-                
+
+                                console.log(data);
+
                                 fetch('/api/group/creategroup' , {
                                     method: 'POST',
                                     headers: {
@@ -174,15 +239,15 @@ class Dash extends React.Component {
                                     this.setState({
                                         modalopened: false
                                     })
-
                                     this.fetchUserGroups();
-                                    
                                 }).catch((error) => {
                                     console.log(error);
-                                })                              
+                                })  
+  
+                                                      
                               }}>
                                 SUBMIT
-                            </div>
+                            </button>
                         </div>
                       </div>
                      </div>
@@ -206,7 +271,7 @@ class Dash extends React.Component {
                       <div key={item.clientid}>
                        <div className="group-spacing">
                        <NavLink className="groupnav slightshadow" to={"/group/" + item.groupapi}>
-                        <div className="groupcard">
+                        <div className={"groupcard-" + item.typeofgroup}>
                             <h3 className="text-center">{item.groupname}</h3>
                         </div>
                        </NavLink>

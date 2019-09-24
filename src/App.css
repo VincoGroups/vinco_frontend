@@ -215,6 +215,14 @@
   border-radius: 5px;
 }
 
+.button-grey {
+  border-style: none;
+  background-color: #EEEEEE;
+  color: #9E9E9E;
+  padding: 5px;
+  border-radius: 5px;
+}
+
 .button-submit:hover {
   background-color: white;
 }
@@ -225,6 +233,14 @@
   color: #0D47A1;
   padding: 5px;
   border-radius: 5px;
+}
+
+.small-input-container {
+  padding-top: 20px;
+}
+
+.select-group {
+  padding: 20px;
 }
 
 .button-white {
@@ -475,15 +491,26 @@
   color: #0D47A1;
 }
 
-.groupcard {
+.groupcard-BASICGROUPS {
   background: white;
   color: #0D47A1;
   padding: 50px;
   border-radius: 10px;
 }
 
-.groupcard:hover {
+.groupcard-BASICGROUPS:hover {
   background-color: #BBDEFB;
+}
+
+.groupcard-ORGANIZATIONALGROUPS {
+  background: #2979FF;
+  color: white;
+  padding: 50px;
+  border-radius: 10px;
+}
+
+.groupcard-ORGANIZATIONALGROUPS:hover {
+  background-color: #2962FF;
 }
 
 .group-spacing {
@@ -560,6 +587,12 @@
 
 .no-pending {
   padding-top: 200px;
+}
+
+.error-message {
+  padding-top: 10px;
+  padding-bottom: 30px;
+  color: #F44336;
 }
 
 .group-nav-padding {
@@ -1189,3 +1222,9 @@
   height: 100%;
 }
 
+.subgroups-page {
+  padding: 20px;
+  background-color: #EEEEEE;
+  color: #0D47A1;
+  height: 100vh;
+}
