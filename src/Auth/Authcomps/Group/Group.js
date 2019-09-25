@@ -321,6 +321,10 @@ class Group extends React.Component {
                 <Subgroup
                 subgroupcomp={this.state.subcomp}
                 groupname={this.state.groupres.groupname}
+                groupid={this.state.groupres.groupid}
+                subgroupid = {this.state.groupres.subgroupsid}
+                grouptype = {this.state.groupres.typeofgroup}
+                groupapi={this.state.groupres.groupapi}
                 />
               </div>
              </div>

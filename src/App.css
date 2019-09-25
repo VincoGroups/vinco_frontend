@@ -1228,3 +1228,14 @@
   color: #0D47A1;
   height: 100vh;
 }
+
+.group-card-pretty-blue {
+  background: #2962FF;
+  color: white;
+  padding: 50px;
+  border-radius: 10px;
+}
+
+.group-card-pretty-blue:hover {
+  background: #2979FF;
+}

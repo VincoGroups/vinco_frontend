@@ -10,6 +10,7 @@ import Search from './Auth/Search';
 import Register from './NonAuth/Register';
 import Group from './Auth/Authcomps/Group/Group';
 import Pendinggroups from './Auth/Pendinggroups';
+import SubHome from './Auth/Authcomps/Subgroup/SubHome';
 class App extends React.Component{
   constructor(props) {
     super(props);
@@ -57,6 +58,7 @@ class App extends React.Component{
           <PrivateRoute path="/search" component={Search} isAuthenticated={this.state.auth} exact/>
           <PrivateRoute path="/group/:groupapi" component={Group} isAuthenticated={this.state.auth} exact/>
           <PrivateRoute path="/pending" component={Pendinggroups} isAuthenticated={this.state.auth} exact/>
+          <PrivateRoute path="/subgroup/:mainapi/:subapi" component={SubHome} isAuthenticated={this.state.auth} exact/>
         </BrowserRouter>
       </div>
     );
