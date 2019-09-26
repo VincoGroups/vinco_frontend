@@ -436,7 +436,7 @@ class Filer extends React.Component {
                                   filedata: filedata
                               }
                               
-                              fetch('/api/boxfiler/createfolder/'  + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.boxfilerid + '/' + data.folderid, {
+                              fetch('/api/boxfiler/createfolder/'  + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subgroupid + '/' + data.folderid, {
                                   method: 'POST',
                                   headers: {
                                     'Accept': 'application/json',

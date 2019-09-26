@@ -1,13 +1,15 @@
 import React from 'react';
 import Authnav from '../Authnav';
 import SubPostShow from './Subposts'
+import SubShowBox from './SubBox'
 
 class SubHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             subres: [],
-            subpost: true
+            subpost: true,
+            subbox: false
         }
     }
 
@@ -39,10 +41,20 @@ class SubHome extends React.Component {
                 <div className="float-right">
                 <div className="row">
                    <div className="col-md-4">
-                     <h6 className="text-center">POSTS</h6>
+                     <h6 className="text-center" onClick={() => {
+                       this.setState({
+                         subpost: true,
+                         subbox: false
+                       })
+                     }}>POSTS</h6>
                    </div>
                    <div className="col-md-4">
-                     <h6 className="text-center">BOX</h6>
+                     <h6 className="text-center" onClick={() => {
+                       this.setState({
+                         subpost: false,
+                         subbox: true
+                       })
+                     }}>BOX</h6>
                    </div>
                    <div className="col-md-4">
                      <h6 className="text-center">CHATS</h6>
@@ -64,6 +76,15 @@ class SubHome extends React.Component {
                   subgroupid={this.state.subres.subgroupid}
                   subid={this.state.subres.subid}
                   subpostid={this.state.subres.subgrouppost}
+                  />
+                  <SubShowBox 
+                  subboxshow={this.state.subbox}
+                  subgroupname={this.state.subres.subgroupname}
+                  subid={this.state.subres.subid}
+                  subgroupid={this.state.subres.subgroupid}
+                  grouptype={this.state.subres.grouptype}
+                  subboxid={this.state.subres.subboxfilerid}
+                  groupid={this.state.subres.groupid}
                   />
                 </div>
                </div>

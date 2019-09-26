@@ -413,6 +413,13 @@
   opacity: 1;
 }
 
+.modal-container-blue {
+  background-color: #2962FF;
+  color: white;
+  padding: 20px;
+  opacity: 1;
+}
+
 .modal-container-color-blue {
   background-color: white;
   color: #2962FF;
@@ -721,7 +728,6 @@
   background-color: #2962FF;
   color: white;
   padding: 20px;
-  border-top-left-radius: 17px;
 }
 
 .folder-output:hover {
