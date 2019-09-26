@@ -325,6 +325,7 @@ class Group extends React.Component {
                 subgroupid = {this.state.groupres.subgroupsid}
                 grouptype = {this.state.groupres.typeofgroup}
                 groupapi={this.state.groupres.groupapi}
+                mainboxfilerid={this.state.groupres.boxfilerid}
                 />
               </div>
              </div>

@@ -61,7 +61,7 @@ class Subgrouphome extends React.Component {
                 {this.state.subgroupres.map((item) => (
                     <div key={this.state.subgroupres.indexOf(item)}>
                     <div className="group-spacing">
-                     <NavLink className="groupnav" to={"/subgroup/" + item.maingroupapi + "/" + item.subgroupapi}>
+                     <NavLink className="groupnav" to={"/subgroup/" + item.grouptype + '/' + item.maingroupapi + "/" + item.subgroupapi}>
                       <div className="group-card-pretty-blue slightshadow">
                         <h3 className="text-center">{item.subgroupname}</h3>
                       </div>
@@ -140,26 +140,31 @@ class Subgrouphome extends React.Component {
                               areyouinthissubgroup: this.state.areyouinthissubgroup,
                               maingroupapi: this.props.groupapi,
                               subgroupapi: generateId(38),
-                              groupid: this.props.groupid
+                              groupid: this.props.groupid,
+                              grouptype: this.props.grouptype,
+                              subid: this.props.subgroupid,
+                              mainboxfilerid: this.props.mainboxfilerid,
+                              maingroupname: this.props.groupname
                           }
-
+                          
                           fetch('/api/subgroup/createsubggroup/' + this.props.grouptype + '/' + this.props.groupid  + '/' + this.props.subgroupid + '/' + firebase.auth().currentUser.uid, {
-                              method: 'PUT',
-                              headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                              },
-                              body: JSON.stringify(data)
-                          }).then(() => {
-                              console.log('this worked')
-                              this.setState({
-                                subgroupmodal: false
-                              })
+                            method: 'PUT',
+                            headers: {
+                              'Accept': 'application/json',
+                              'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        }).then(() => {
+                            console.log('this worked')
+                            this.setState({
+                              subgroupmodal: false
+                            })
 
-                              this.fetchSubgroups()
-                          }).catch((error) => {
-                              console.log(error);
-                          })
+                            this.fetchSubgroups()
+                        }).catch((error) => {
+                            console.log(error);
+                        })
+
                       }}>CREATE SUBGROUP</button>
                      </div>
                     </div>
@@ -197,12 +202,12 @@ class Subgrouphome extends React.Component {
     }
 }
 
-const Subgroup = ({subgroupcomp , groupname , groupid , subgroupid, grouptype , groupapi}) => {
+const Subgroup = ({subgroupcomp , groupname , groupid , subgroupid, grouptype , groupapi , mainboxfilerid}) => {
     if (subgroupcomp === true) {
         console.log('here')
         return (
             <div>
-              <Subgrouphome groupapi={groupapi} grouptype={grouptype} subgroupid={subgroupid} groupid={groupid} groupname={groupname}/>
+              <Subgrouphome mainboxfilerid={mainboxfilerid} groupapi={groupapi} grouptype={grouptype} subgroupid={subgroupid} groupid={groupid} groupname={groupname}/>
             </div>
         )
     } else {

@@ -58,7 +58,7 @@ class App extends React.Component{
           <PrivateRoute path="/search" component={Search} isAuthenticated={this.state.auth} exact/>
           <PrivateRoute path="/group/:groupapi" component={Group} isAuthenticated={this.state.auth} exact/>
           <PrivateRoute path="/pending" component={Pendinggroups} isAuthenticated={this.state.auth} exact/>
-          <PrivateRoute path="/subgroup/:mainapi/:subapi" component={SubHome} isAuthenticated={this.state.auth} exact/>
+          <PrivateRoute path="/subgroup/:grouptype/:mainapi/:subapi" component={SubHome} isAuthenticated={this.state.auth} exact/>
         </BrowserRouter>
       </div>
     );

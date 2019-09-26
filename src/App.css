@@ -413,6 +413,13 @@
   opacity: 1;
 }
 
+.modal-container-color-blue {
+  background-color: white;
+  color: #2962FF;
+  padding: 20px;
+  opacity: 1;
+}
+
 .modal-container-grey {
   background-color: #EEEEEE;
   color: #0D47A1;
@@ -884,6 +891,10 @@
   padding-bottom: 6px;
 }
 
+.post-message {
+  padding: 10px;
+}
+
 .post-question {
   background-color: #2962FF;
   color: white;
@@ -896,6 +907,10 @@
 .post-heading-question {
   background-color: #2962FF;
   color: white;
+  padding: 10px;
+}
+
+.post-header {
   padding: 10px;
 }
 
@@ -989,6 +1004,12 @@
 
 .input-comment::placeholder {
   color: #1976D2;
+}
+
+.plain-btn {
+  background-color: transparent;
+  border-style: none;
+  color: #2962FF;
 }
 
 .plain-btn-question {
@@ -1239,3 +1260,47 @@
 .group-card-pretty-blue:hover {
   background: #2979FF;
 }
+
+.subgroup-nav {
+  padding-top: 20px;
+  background-color: #2962FF;
+  color: white;
+  padding-bottom: 10px;
+}
+
+.subgroup-nav h6:hover {
+  color: #EEEEEE
+}
+
+.subgroup {
+  padding-top: 20px;
+  color: #2962FF;
+}
+
+.sub-post {
+  background-color: #2962FF;
+  color: white;
+}
+
+.sub-post:hover {
+  background-color: #2979FF;
+}
+
+.input-comment-sub {
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 25px;
+  border-style: solid;
+  border-color: #2962FF;
+  color: #2962FF;
+  background-color: transparent;
+  outline: none;
+}
+
+ .input-comment-sub::placeholder {
+   color: #2962FF;
+ }

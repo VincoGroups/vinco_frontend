@@ -11,15 +11,19 @@ class Notifications extends React.Component {
         }
     }
 
+    _isMounted = false
+
     fetchNotifications = () => {
         setTimeout(() => {
             fetch('/user/getnotifications/' + firebase.auth().currentUser.uid)
             .then((res) => {
                 return res.json();
             }).then((bod) => {
-                this.setState({
-                    res: bod
-                })
+                if (this._isMounted) {
+                    this.setState({
+                        res: bod
+                    })
+                }
             }).catch((error) => {
                 console.log(error);
             })
@@ -27,6 +31,7 @@ class Notifications extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted  = true
         this.fetchNotifications();
     }
 
