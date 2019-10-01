@@ -183,7 +183,6 @@ class Subgrouphome extends React.Component {
         console.log(this.state);
         return (
             <div>
-             <div className="subgroups-page">
              <div className="float-right">
               <button className="button-submit-blue" onClick={() => {
                   this.setState({
@@ -191,10 +190,9 @@ class Subgrouphome extends React.Component {
                   })
               }}>CREATE SUBGROUP</button>
              </div>
-             <h1>{this.props.groupname + "s Subgroups"}</h1>
+             <h1>Subgroups</h1>
              <div className="input-container">
               <this.OutputSubgroups/>
-             </div>
              </div>
              <this.CreateSubGroup subgroupmodal={this.state.subgroupmodal}/>
             </div>
@@ -207,7 +205,9 @@ const Subgroup = ({subgroupcomp , groupname , groupid , subgroupid, grouptype , 
         console.log('here')
         return (
             <div>
-              <Subgrouphome mainboxfilerid={mainboxfilerid} groupapi={groupapi} grouptype={grouptype} subgroupid={subgroupid} groupid={groupid} groupname={groupname}/>
+                <div className="group-page">
+                  <Subgrouphome mainboxfilerid={mainboxfilerid} groupapi={groupapi} grouptype={grouptype} subgroupid={subgroupid} groupid={groupid} groupname={groupname}/>
+                </div>
             </div>
         )
     } else {

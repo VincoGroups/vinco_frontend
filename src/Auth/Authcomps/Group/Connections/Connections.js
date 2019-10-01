@@ -781,20 +781,30 @@ class ConnectionPages extends React.Component {
       return (
         <div>
         <div className="connection-home">
-        <div className="float-right">
-        <button className="button-submit justify-content-center" onClick={() => {
+         <div className="row">
+         <div className="col-md-6">
+          <h1>Connections</h1>
+         </div>
+         <div className="col-md-6">
+          <div className="row">
+            <div className="col-md-6">
+            <button className="button-submit justify-content-center" onClick={() => {
                  this.setState({
                    connectionmodal: true
                  })
                }}>MAKE A CONNECTION</button>
-        <button className="button-submit-white" onClick={() => {
-          this.setState({
-            renderpendingpage: true,
-            connectionhome: false
-          })
-        }}>PENDING CONNECTIONS</button>
-        </div>
-        <h1>{this.props.groupname + "s Connections"}</h1>
+            </div>
+            <div className="col-md-6">
+            <button className="button-submit-blue" onClick={() => {
+              this.setState({
+                renderpendingpage: true,
+                connectionhome: false
+              })
+            }}>PENDING CONNECTIONS</button>
+            </div>
+          </div>
+         </div>
+         </div>
         <this.ConnectionsMade connectionsavailable={this.state.connectionsavailable}/>
         <this.MakeAConnectionModal connectionmodal={this.state.connectionmodal}/>
         <this.ConnectionGroupShow connectiongroup={this.state.connectiongroup} groupdetails={this.state.connectgroup}/>
@@ -870,7 +880,7 @@ const Connections = ({groupconnectivity , grouptype ,groupclientid ,groupname , 
   if (groupconnectivity === true) {
     return (
       <div>
-        <div className="connections-page">
+        <div className="group-page">
           <ConnectionPages grouptype={grouptype} groupclientid={groupclientid} boxfilerid={boxfilerid} groupname={groupname} groupid={groupid}/>
         </div>
       </div>

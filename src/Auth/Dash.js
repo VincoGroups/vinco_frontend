@@ -10,6 +10,7 @@ class Dash extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            subres: [],
             response: [],
             modalopened: false,
             groupname: '',
@@ -19,7 +20,9 @@ class Dash extends React.Component {
             suggestions: [],
             allusers: [],
             loading: true,
-            typeofgroup: 'BASICGROUPS'
+            typeofgroup: 'BASICGROUPS',
+            groupoutput: true,
+            subgroupoutput: false
         }
     }
 
@@ -56,6 +59,17 @@ class Dash extends React.Component {
           })
          }).catch((error) => {
           console.log(error)
+        })
+
+        fetch('/user/getusersubs/' + firebase.auth().currentUser.uid)
+        .then((res) => {
+            return res.json();
+        }).then((body) => {
+            this.setState({
+                subres: body
+            })
+        }).catch((error) => {
+            console.log(error);
         })
      }    
 
@@ -204,7 +218,8 @@ class Dash extends React.Component {
                                         groupapi: generateId(45) + "b",
                                         typeofgroup: this.state.typeofgroup,
                                         adminusers: adminusers,
-                                        users: users
+                                        users: users,
+                                        mainchatid: generateId(57)
                                     }
                                 } else if (this.state.typeofgroup === "ORGANIZATIONALGROUPS") {
                                     data = {
@@ -220,7 +235,8 @@ class Dash extends React.Component {
                                         subcomponentsid: generateId(47),
                                         typeofgroup: this.state.typeofgroup,
                                         adminusers: adminusers,
-                                        users: users                                    
+                                        users: users,
+                                        mainchatid: generateId(57)                          
                                     }
                                 }
 
@@ -261,28 +277,60 @@ class Dash extends React.Component {
     }
 
 
-     Groupoutput = () => {
-         return (
-            <div>
-            <div className="g-container">
-            <div className="row">
-              {
-                  this.state.response.map(item => (
-                      <div key={item.clientid}>
-                       <div className="group-spacing">
-                       <NavLink className="groupnav slightshadow" to={"/group/" + item.groupapi}>
-                        <div className={"groupcard-" + item.typeofgroup}>
-                            <h3 className="text-center">{item.groupname}</h3>
-                        </div>
-                       </NavLink>
-                       </div>
-                      </div>
-                  ))
-              }
-            </div>
-            </div>
-          </div>
-         )
+     Groupoutput = ({groupoutput}) => {
+         if (groupoutput === true) {
+            return (
+                <div>
+                <div className="g-container">
+                <div className="row">
+                  {
+                      this.state.response.map(item => (
+                          <div key={item.clientid}>
+                           <div className="group-spacing">
+                           <NavLink className="groupnav slightshadow" to={"/group/" + item.groupapi}>
+                            <div className={"groupcard-" + item.typeofgroup}>
+                                <h3 className="text-center">{item.groupname}</h3>
+                            </div>
+                           </NavLink>
+                           </div>
+                          </div>
+                      ))
+                  }
+                </div>
+                </div>
+              </div>
+             )
+         } else {
+             return null
+         }
+     }
+
+     SubGroupOutput = ({subgroupoutput}) => {
+        if (subgroupoutput === true) {
+            return (
+                <div>
+                <div className="g-container">
+                <div className="row">
+                  {
+                      this.state.subres.map(item => (
+                          <div key={this.state.subres.indexOf(item)}>
+                           <div className="group-spacing">
+                           <NavLink className="groupnav slightshadow" to={"/subgroup/" + item.grouptype + '/' + item.maingroupapi + "/" + item.subgroupapi}>
+                            <div className="subgroupcard">
+                                <h3 className="text-center">{item.subgroupname}</h3>
+                            </div>
+                           </NavLink>
+                           </div>
+                          </div>
+                      ))
+                  }
+                </div>
+                </div>
+              </div>
+             )
+        } else {
+            return null;
+        }
      }
 
     render() {
@@ -306,13 +354,42 @@ class Dash extends React.Component {
                  </div>
                  </div>
                  <div>
-                   <NavLink className="navlink" to="/pending">
-                    <button className="button-submit-white">PENDING GROUPS</button> 
-                   </NavLink>
+                   <div className="float-left">
+                   <div className="row">
+                    <div className="col-md-6">
+                     <div className="button-padding">
+                     <NavLink className="navlink" to="/pending">
+                      <button className="button-submit-white">PENDING GROUPS</button> 
+                     </NavLink>
+                     </div>
+                    </div>
+                    <div className="col-md-3">
+                    <div className="button-padding">
+                    <button className="button-submit" onClick={() => {
+                        this.setState({
+                            groupoutput: true,
+                            subgroupoutput: false
+                        })
+                    }}>GROUPS</button>
+                    </div>
+                    </div>
+                    <div className="col-md-3">
+                    <div className="button-padding">
+                    <button className="button-submit-blue" onClick={() => {
+                       this.setState({
+                           subgroupoutput: true,
+                           groupoutput: false
+                       })
+                    }}>SUBGROUPS</button>
+                    </div>
+                    </div>
+                   </div>
+                   </div>
                  </div>
                 </div>
                 <LoadingWhite loading={this.state.loading} />
-                <this.Groupoutput/>
+                <this.Groupoutput groupoutput={this.state.groupoutput}/>
+                <this.SubGroupOutput subgroupoutput={this.state.subgroupoutput}/>
                 </div>
                </div>
              </div>

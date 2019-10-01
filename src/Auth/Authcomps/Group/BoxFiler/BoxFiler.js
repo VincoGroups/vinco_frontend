@@ -545,9 +545,8 @@ class Filer extends React.Component {
         console.log(this.state);
         return (
             <div>
-             <div className="row">
-              <div className="col-md-12">
-                <div className="float-right">
+              <div className="group-page">
+              <div className="float-right">
                 <button className="button-submit" onClick={() => {
                     this.setState({
                         foldermodal: true
@@ -556,7 +555,6 @@ class Filer extends React.Component {
                 </div>
                 <h2>FOLDERS</h2>
               </div>
-             </div>
              <LoadingBlue loading={this.state.loading}/>
              <div>
              <this.Folders/>

@@ -17,12 +17,12 @@ class Authnav extends React.Component {
                    <div className="row">
                    <div className="col-md-3">
                       <div className="nav-padding">
-                      <NavLink to="/dash" className="navlink"><h6>HOME</h6></NavLink>
+                      <NavLink to="/dash" className="navlink-auth"><h6>HOME</h6></NavLink>
                       </div>
                    </div>
                    <div className="col-md-3">
                      <div className="nav-padding">
-                      <NavLink to="/search" className="navlink"><h6>SEARCH</h6></NavLink>
+                      <NavLink to="/search" className="navlink-auth"><h6>SEARCH</h6></NavLink>
                      </div>
                     </div>
                     <div className="col-md-3">

@@ -15,7 +15,9 @@
     "react-pdf-js": "^5.1.0",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1",
-    "simple-crypto-js": "^2.2.0"
+    "simple-crypto-js": "^2.2.0",
+    "sockjs-client": "^1.4.0",
+    "stompjs": "^2.3.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -38,5 +40,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8080/"
+  "proxy": "http://localhost:8080"
 }
