@@ -1,6 +1,6 @@
 import React from 'react';
-import LoadingBlue from '../../../../NonAuth/Comps/Loadingblue';
-import generateId from '../../../../ServerSide/generate';
+import LoadingBlue from '../../../../Comps/Loadingblue';
+import {generateId} from '../../../../ServerSide/functions';
 import firebase from '../../../../ServerSide/basefile';
 
 class ConnectionComments extends React.Component {

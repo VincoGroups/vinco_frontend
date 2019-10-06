@@ -1,6 +1,6 @@
 import React from 'react';
 import firebase from '../../../ServerSide/basefile';
-import generateId from '../../../ServerSide/generate';
+import {generateId} from '../../../ServerSide/functions';
 
 class SubPostsComments extends React.Component {
     constructor(props) {

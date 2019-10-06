@@ -1,35 +1,38 @@
-import React from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Authnav from '../Auth/Authcomps/Authnav';
 import firebase from '../ServerSide/basefile';
 
-class Pendinggroups extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            res: [],
-            showdetails: false,
-            dets: []
-        }
-    }
+const Pendinggroups = (props) =>{
+    const [res, setRes] = useState({
+        res: []
+    })
+    const [showdetails, setShowDetails] = useState({
+        showdetails: false
+    })
+    const [dets, setDets] = useState({
+        dets: []
+    })
 
-    async componentDidMount() {
-      await this.fetchPendingGroups()
-    }
+    const componentMounted = useRef(null);
 
-    fetchPendingGroups = () => {
+    useEffect(() => {
+    componentMounted.current = true
+      if (componentMounted.current) {
         fetch('/api/group/pendinggroups/' + firebase.auth().currentUser.uid)
-            .then((response) => {
-                return response.json();
-            }).then((bod) => {
-                this.setState({
-                    res: bod
-                })
-            }).catch((error) => {
-                console.log(error);
+        .then((response) => {
+            return response.json();
+        }).then((bod) => {
+            setRes({
+                res: bod
             })
-    }
+        }).catch((error) => {
+            console.log(error);
+        })
+      }
+    }, [])
+    
 
-    ShowDetails = ({showdetails , dets}) => {
+   const ShowDetails = ({showdetails , dets}) => {
         if (showdetails === true) {
             return (
                 <div>
@@ -38,7 +41,7 @@ class Pendinggroups extends React.Component {
                       <div className="modal-padding">
                         <div className="modal-blue-container">
                          <span className="closebtnwhite" onClick={() => {
-                             this.setState({
+                             setShowDetails({
                                  showdetails: false
                              })
                          }}>&times;</span>
@@ -58,20 +61,22 @@ class Pendinggroups extends React.Component {
         }
     }
 
-    PendingGroups = () => {
-       if (this.state.res.length > 0) {
+   const PendingGroups = () => {
+       if (res.res.length > 0) {
         return(
             <div>
               <div className="row">
                 {
-                    this.state.res.map(item => (
-                        <div key={this.state.res.indexOf(item)}>
+                    res.res.map(item => (
+                        <div key={res.res.indexOf(item)}>
                         <div className="group-spacing">
                         <div className="pending-group-card slightshadow">
                             <span className="details" onClick={() => {
-                                this.setState({
-                                showdetails: true,
-                                dets: item
+                                setShowDetails({
+                                    showdetails: true
+                                })
+                                setDets({
+                                    dets: item
                                 })
                             }}></span>
                             <div className="pending-group-card-padding">
@@ -82,7 +87,7 @@ class Pendinggroups extends React.Component {
                                         .then((res) => {
                                             return res.json()
                                         }).then(() => {
-                                            this.props.history.push('/dash');
+                                            props.history.push('/dash');
                                         }).catch((error) => {
                                             console.log(error)
                                         })
@@ -109,7 +114,6 @@ class Pendinggroups extends React.Component {
        }
     }
 
-    render() {
         return (
             <div>
              <Authnav/>
@@ -118,15 +122,15 @@ class Pendinggroups extends React.Component {
                  <div className="container">
                   <h3>PENDING GROUPS</h3>
                    <div className="group-padding">
-                    <this.PendingGroups/>
+                    <PendingGroups/>
                    </div>
                  </div>
                 </div>
               </div>
-              <this.ShowDetails showdetails={this.state.showdetails} dets={this.state.dets}/>
+              <ShowDetails showdetails={showdetails.showdetails} dets={dets.dets}/>
             </div>
         )
-    }
+    
 }
 
 export default Pendinggroups

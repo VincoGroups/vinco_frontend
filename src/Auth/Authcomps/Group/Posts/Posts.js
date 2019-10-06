@@ -1,8 +1,7 @@
 import React from 'react';
-import generateId from '../../../../ServerSide/generate';
+import {generateId} from '../../../../ServerSide/functions';
 import firebase from '../../../../ServerSide/basefile';
-import setNotifications from '../../../../ServerSide/userfunctions/SetNotification';
-import Loadingblue from '../../../../NonAuth/Comps/Loadingblue';
+import Loadingblue from '../../../../Comps/Loadingblue';
 
 class Comments extends React.Component {
     constructor(props) {
@@ -121,7 +120,6 @@ class Comments extends React.Component {
                  }).then((bod) => {
                      if(bod.response === true) {
                          this.fetchComments();
-                         setNotifications("commentonpost" , firebase.auth().currentUser.uid , firebase.auth().currentUser.displayName , this.props.groupname , this.props.groupid, this.state.commentinput, null, "comment" , this.props.groupapi);
                      }
                  }).catch((error) => { 
                      console.log(error);
@@ -158,26 +156,27 @@ class Posts extends React.Component{
         }
     }
 
+    fetchWallposts = () => {
+        setTimeout(() => {
+        fetch('/wallpostapi/getposts/'+ this.props.grouptype + '/' + this.props.groupid + '/' + this.props.wallpostid)
+        .then((res) => {
+            return res.json();
+        }).then((bod) => {
+            const newbod = bod.sort((a, b) => new Date(a.date) - new Date(b.date));
+            this.setState({
+                postsres: newbod.reverse(),
+                loading: false
+            })
+        }).catch((error) => {
+            console.log(error);
+        })
+        } , 500)
+       }
+
    componentDidMount() {
     this.fetchWallposts()
    }
 
-   fetchWallposts = () => {
-    setTimeout(() => {
-    fetch('/wallpostapi/getposts/'+ this.props.grouptype + '/' + this.props.groupid + '/' + this.props.wallpostid)
-    .then((res) => {
-        return res.json();
-    }).then((bod) => {
-        const newbod = bod.sort((a, b) => new Date(a.date) - new Date(b.date));
-        this.setState({
-            postsres: newbod.reverse(),
-            loading: false
-        })
-    }).catch((error) => {
-        console.log(error);
-    })
-    } , 500)
-   }
    
    ReminderModal = ({remindershow}) => {
         if (remindershow === true) {
@@ -233,18 +232,95 @@ class Posts extends React.Component{
                         </div>
                         <div className="button-padding">
                            <button className="button-submit-blue" onClick={() => {
+
+                            
+                            const timedisplay = (time) => {
+                                let timesplit = time.split(':');
+                                let hours;
+                                
+                                hours = timesplit[0];
+                               let minutes = timesplit[1];
+                               let meridian = null;
+                                if (hours > 12) {
+                                    meridian = 'PM';
+                                    hours -= 12;
+                                } else if (hours < 12) {
+                                    meridian = 'AM'
+                                    if (hours === 0) {
+                                        hours = 12
+                                    }
+                                } else { 
+                                    meridian = 'PM'
+                                }
+
+                                return hours + ':' + minutes + ' ' + meridian 
+                            }
+
+                            const getMonthAndDate = (date) => {
+                                const montharray = [{
+                                    month: 'Jan',
+                                    index: 1
+                                }, {
+                                    month: 'Feb',
+                                    index: 2
+                                }, {
+                                    month: 'Mar',
+                                    index: 3
+                                }, {
+                                    month: 'Apr',
+                                    index: 4
+                                }, {
+                                    month: 'May',
+                                    index: 5
+                                }, {
+                                    month: 'Jun',
+                                    index: 6
+                                }, {
+                                    month: 'Jul',
+                                    index: 7
+                                }, {
+                                    month: 'Aug',
+                                    index: 8
+                                }, {
+                                    month: 'Sep',
+                                    index: 9
+                                }, {
+                                    month: 'Oct',
+                                    index: 10
+                                }, {
+                                    month: 'Nov',
+                                    index: 11
+                                }, {
+                                    month: 'Dec',
+                                    index: 12
+                                }]
+                                const month = date.substring(5,7);
+                                let monthtitle;
+                                for (let i = 0; i < montharray.length; i++) {
+                                    if (montharray[i].index === Number(month)) {
+                                        return montharray[i].month + ' ' + date.substring(8) 
+                                    }
+                                }
+
+                                return monthtitle + ' ' + date.substring(8)
+                            }
+
                                const data = {
                                    reminderid: generateId(53),
-                                   reminderdate: this.state.reminderdate,
                                    reminderpost: this.state.reminderpost,
-                                   remindertime: this.state.remindertime,
+                                   postremindertime: getMonthAndDate(this.state.reminderdate) + ' ' + timedisplay(this.state.remindertime) ,
                                    groupname: this.props.groupname,
                                    grouptype: this.props.grouptype,
                                    groupid: this.props.groupid,
-                                   creator: firebase.auth().currentUser.uid
+                                   creator: firebase.auth().currentUser.uid,
+                                   backenddate: this.state.reminderdate + ' ' + this.state.remindertime,
+                                   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
                                }
+
+                               console.log(data);
     
-                               fetch('/api/group/setreminder/' + this.props.grouptype + '/' + this.props.groupid , {
+                               
+                               fetch('/api/reminders/makeremindermain/' + this.props.grouptype + '/' + this.props.groupid , {
                                    method: 'PUT',
                                    headers: {
                                     'Accept': 'application/json',
@@ -258,6 +334,7 @@ class Posts extends React.Component{
                                }).catch((error) => {
                                    console.log(error);
                                })
+                               
     
                            }}>MAKE REMINDER</button>
                         </div>
@@ -344,11 +421,6 @@ class Posts extends React.Component{
                 postshow: false
             })
 
-            if (this.state.currentpost === "question") {
-                setNotifications("createpostquestion" , firebase.auth().currentUser.uid, firebase.auth().currentUser.displayName, this.props.groupname, this.props.groupid , this.state.post, null, "post" , this.props.groupapi);
-            } else if (this.state.currentpost === "statement") {
-                setNotifications("createpoststatement" , firebase.auth().currentUser.uid, firebase.auth().currentUser.displayName, this.props.groupname, this.props.groupid , this.state.post, null, "post" , this.props.groupapi);
-            }
 
         }).catch((error) => {
             console.log(error);

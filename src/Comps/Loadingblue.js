@@ -1,14 +1,16 @@
 import React from 'react';
-import '../../App.css'
+import '../App.css'
 
-const LoadingBlue = ({loading}) => {
+const LoadingBlue = ({loading , statement}) => {
     if(loading === true) {
         return (
             <div>
                 <div className="loading-comp">
                 <div className="d-flex justify-content-center">
                     <div className="loadingblue"></div>
-                    <h1 className="text-center">LOADING CONTENT</h1>
+                    <div className="title-padding">
+                    <h4 className="text-center">{statement}</h4>
+                    </div>
                 </div>
                 </div>
             </div>

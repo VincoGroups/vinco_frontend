@@ -1,107 +1,124 @@
-import React, {useState , useEffect}from 'react';
+import React, {useState , useEffect, useRef}from 'react';
 import Authnav from '../Authnav';
 import BoxFiler from './BoxFiler/BoxFiler';
 import PostsShow from './Posts/Posts';
 import Connections from './Connections/Connections';
 import firebase from '../../../ServerSide/basefile';
-import Addusersfilter from '../../../ServerSide/userfunctions/Addusers';
+import FilterUsers from '../../../ServerSide/Filters/FilterUsersAdd';
 import Subgroup from './Subgroups/Subgrouphome';
 import MainChatShow from './Mainchat/Mainchat';
 
-class Group extends React.Component {
+const Group = (props) => {
 
-    constructor(props){
-        super(props);
-        this.state = {
-            groupres : [],
-            boxfiler: false,
-            wallpost: true,
-            groupconnectivity: false,
-            subcomp: false,
-            mainchat: false,
-            groupdetails: false,
-            usersdetails: [],
-            leavegroupmodal: false,
-            show: 'hide',
-            addusersmodal: false,
-            subgroups: false,
-            adminuser: false,
-            adminportal: false,
-       }
-    }
+ const [groupres, setGroupRes] = useState({
+    groupres: []
+ })
+ const [boxfiler , setBoxFiler] = useState({
+   boxfiler: false
+ })
+ const [wallpost , setWallPost] = useState({
+   wallpost: true
+})
+const [groupconnectivity , setGroupConnectivity] = useState({
+   groupconnectivity: false
+})
+const [subcomp , setSubComp] = useState({
+   subcomp: false
+})
+const [mainchat , setMainchat] = useState({
+   mainchat: false
+})
+const [groupdetails , setGroupDetails] = useState({
+   groupdetails: false
+})
+const [leavegroupmodal , setLeaveGroupModal] = useState({
+   leavegroupmodal: false
+})
+const [show , setShow] = useState({
+   show: 'hide'
+})
+const [addusersmodal , setAddUsersModal] = useState({
+   addusersmodal: false
+})
+const [subgroups , setSubGroups] = useState({
+   subgroups: false
+})
+const [adminuser , setAdminUser] = useState({
+   adminuser: false
+})
+const [adminportal , setAdminPortal] = useState({
+    adminportal: false
+})
+      
+    const componentMounted = useRef(null);
 
-   async componentDidMount() {
-      const {groupapi} = this.props.match.params;
-      await fetch('/api/group/checkusergroup/' + groupapi + '/' + firebase.auth().currentUser.uid)
-      .then((res) => {
-        return res.json();
-      }).then((bod) => {
-        if (bod.userresponse === true) {
-          fetch('/api/group/' + groupapi + '/' + firebase.auth().currentUser.uid)
-          .then((res) => {
-              return res.json();
-          }).then((bod) => {
-              this.setState({
-                  groupres: bod
-              })
-          }).then(() => {
-            if (this.state.groupres.typeofgroup === "ORGANIZATIONALGROUPS") {
-              this.setState({
-                subgroups: true
-              })
-            } else {
-              this.setState({
-                subgroups: false
-              })
-            }
-          }).catch((error) => {
-              console.log(error)
-          })
-        } else if (bod.userresponse === false) {
-          this.props.history.push('/dash');
+    useEffect(() => {
+      componentMounted.current = true;
+      if (componentMounted.current) {
+        setTimeout(() => {
+        const {groupapi} = props.match.params;
+        fetch('/api/group/checkusergroup/' + groupapi + '/' + firebase.auth().currentUser.uid)
+       .then((res) => {
+         return res.json();
+       }).then((bod) => {
+         if (bod.userresponse === true) {
+           fetch('/api/group/' + groupapi + '/' + firebase.auth().currentUser.uid)
+           .then((res) => {
+               return res.json();
+           }).then((bod) => {
+               setGroupRes({
+                   groupres: bod
+               })
+           }).then(() => {
+             if (groupres.groupres.grouptype === "ORGANIZATIONALGROUPS") {
+               setSubGroups({
+                 subgroups: true
+               })
+             } else {
+               setSubGroups({
+                 subgroups: false
+               })
+             }
+           }).catch((error) => {
+               console.log(error)
+           })
+         } else if (bod.userresponse === false) {
+           props.history.push('/dash');
+         }
+        }).catch((error) => {
+          console.log(error);
+        })
+
+        if (groupres.groupres.groupid !== undefined) {
+          fetch('/api/group/checkuseradmin/'+ groupres.groupres.groupid + '/' + firebase.auth().currentUser.uid)
+        .then((res) => {
+          return res.json();
+        }).then((bod) => {
+          if (bod === true) {
+            setAdminUser({
+              adminuser: true
+            })
+          } else {
+            setAdminUser({
+              adminuser: false
+            })
+          }
+        }).catch((error) => {
+          console.log(error);
+        })
         }
-      }).catch((error) => {
-        console.log(error);
-      })
 
-      setTimeout(() => {
-      fetch('/api/group/checkuseradmin/'+ this.state.groupres.groupid + '/' + firebase.auth().currentUser.uid)
-      .then((res) => {
-        return res.json();
-      }).then((bod) => {
-        if (bod === true) {
-          this.setState({
-            adminuser: true
-          })
-        } else {
-          this.setState({
-            adminuser: false
-          })
-        }
-      }).then(() => {
-        fetch('/api/group/getusers/' + this.state.groupres.typeofgroup + '/' + this.state.groupres.groupid)
-              .then((res) => {
-                return res.json();
-              }).then((bod) => {
-                this.setState({
-                  usersdetails: bod
-                })
-              }).catch((error) => {
-                console.log(error);
-              })
-      }).catch((error) => {
-        console.log(error);
-      })
-      }, 500);
+        }, 500);
+      }  
+      return () => {componentMounted.current = false}  
+    }, [groupres.groupres.groupid,groupres.groupres.grouptype,props.history,props.match.params])
 
-    }
-
-    AdminPortal = ({adminportal}) => {
-      const [adminportalusers , setAdminUsers] = useState({
-        allusers: []
+  const AdminPortal = ({adminportal}) => {
+      const [adminportalusers , setAdminPortalUsers] = useState({
+        adminportalusers: []
       })
-      const [adminusers , setTotalAdminUsers] = useState({
-        totalusers: []
+      const [admintotalusers , setAdminTotalUsers] = useState({
+        admintotalusers: []
       })
       const [showAdminOptions, setAdminOptions] = useState({
         adminoptions: true
@@ -110,52 +127,48 @@ class Group extends React.Component {
         admintitle: false
       })
 
+      const subComponentMounted = useRef(null);
 
-      const fetchPortalUsers = () => {
-        setTimeout(() => {
-          fetch('/api/group/getportalusers/' + this.state.groupres.groupid)
-        .then((res) => {
-          return res.json();
-        }).then((bod) => {
-          console.log(bod);
-          setAdminUsers({
-            allusers: bod
-          })
-        }).catch((error) => {
-          console.log(error);
-        })
-        }, 500);
-      }
-
-      const fetchTotalUsers = () => {
-        setTimeout(() => {
-        fetch('/api/group/getusers/' + this.state.groupres.typeofgroup + '/' + this.state.groupres.groupid)
-        .then((res) => {
-          return res.json();
-        }).then((body) => {
-          console.log(body);
-          setTotalAdminUsers({
-            totalusers: body
-          })
-        }).catch((error) => {
-          console.log(error);
-        })
-        }, 500);
-      }
-      
       useEffect(() => {
-        fetchPortalUsers();
-        fetchTotalUsers();
-       }, [])
+        subComponentMounted.current = true;
+        if (subComponentMounted.current) {
+          if (adminportal === true) {
+            setTimeout(() => {
+              fetch('/api/group/getportalusers/' + groupres.groupres.groupid)
+              .then((res) => {
+                return res.json();
+              }).then((bod) => {
+                setAdminPortalUsers({
+                  adminportalusers: bod
+                })
+              }).catch((error) => {
+                console.log(error);
+              })
+    
+              fetch('/api/group/getusers/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid)
+              .then((res) => {
+                return res.json();
+              }).then((body) => {
+                setAdminTotalUsers({
+                  admintotalusers: body
+                })
+              }).catch((error) => {
+                console.log(error);
+              })
+              }, 500);
+          }
+        } 
+        return () => {subComponentMounted.current = false}
+       }, [adminportal])
 
        const OutputOptionsUser = ({adminoptions}) => {
          if (adminoptions === true) {
-            if (adminportalusers.allusers.length > 0) {
+            if (adminportalusers.adminportalusers.length > 0) {
               return (
               <div>
                     {
-                        adminportalusers.allusers.map((item) => (
-                          <div key={adminportalusers.allusers.indexOf(item)}>
+                        adminportalusers.adminportalusers.map((item) => (
+                          <div key={adminportalusers.adminportalusers.indexOf(item)}>
                             <div className="user-container">
                             <div className="row">
                               <div className="col-md-8">
@@ -165,12 +178,14 @@ class Group extends React.Component {
                               <div className="row">
                                 <div className="col-md-6">
                                   <button className="button-submit" onClick={() => {
-                                    fetch('/api/group/makeadmin/' + this.state.groupres.groupid + '/' + item.useruid, {
-                                      method: 'PUT'
+                                    fetch('/api/group/makeadmin/' + groupres.groupres.groupid + '/' + item.useruid, {
+                                      method: 'POST'
                                     })
-                                    .then(() => {
+                                    .then((body) => {
                                       console.log('user has been made admin')
-                                      fetchPortalUsers();
+                                      setAdminPortalUsers({
+                                        adminportalusers: body
+                                      })
                                     }).catch((error) => {
                                       console.log(error);
                                     })
@@ -178,10 +193,20 @@ class Group extends React.Component {
                                 </div>
                                 <div className="col-md-6">
                                   <button className="button-red" onClick={() => {
-                                    fetch('/api/group/removeuser/' + this.state.groupres.groupid + '/' + item.useruid, {
+                                    fetch('/api/group/removeuser/' + groupres.groupres.groupid + '/' + item.useruid, {
                                       method: 'DELETE'
                                     }).then(() => {
-                                      fetchPortalUsers();
+                                      fetch('/api/group/getportalusers/' + groupres.groupres.groupid)
+                                      .then((res) => {
+                                        return res.json();
+                                      }).then((bod) => {
+                                        console.log(bod);
+                                        setAdminPortalUsers({
+                                          adminportalusers: bod
+                                        })
+                                      }).catch((error) => {
+                                        console.log(error);
+                                      })
                                     }).catch((error) => {
                                       console.log(error);
                                     })
@@ -210,12 +235,12 @@ class Group extends React.Component {
 
        const OutputTitleUsers = ({outputtitle}) => {
         if (outputtitle === true) {
-          if (adminusers.totalusers.length > 0) {
+          if (admintotalusers.admintotalusers.length > 0) {
             return (
               <div>
                 {
-                  adminusers.totalusers.map((item) => (
-                    <div key={adminusers.totalusers.indexOf(item)}>
+                  admintotalusers.admintotalusers.map((item) => (
+                    <div key={adminportalusers.adminportalusers.indexOf(item)}>
                       <div className="user-container-blue">
                         <div className="row">
                          <div className="col-md-8">
@@ -226,11 +251,15 @@ class Group extends React.Component {
                           <div className="input-container">
                            <input type="text" className="input-regular-white" placeholder="Give the user title" onKeyDown={(e) => {
                             if (e.keyCode === 13) {
-                              fetch('/api/group/giveusertitle/' + this.state.groupres.typeofgroup + '/' + this.state.groupres.groupid + '/' + item.useruid , {
-                                method: 'PUT',
+                              fetch('/api/group/giveusertitle/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid + '/' + item.useruid , {
+                                method: 'POST',
                                 body: e.target.value
-                              }).then(() => {
-                                fetchTotalUsers();
+                              }).then((res) => {
+                                return res.json();
+                              }).then((body) => {
+                                setAdminTotalUsers({
+                                  admintotalusers: body
+                                })
                               }).catch((error) => {
                                 console.log(error);
                               })
@@ -317,13 +346,13 @@ class Group extends React.Component {
       }
     }
 
-    Addusers = ({addusersmodal}) => {
+   const Addusers = ({addusersmodal}) => {
       const data = {
-        clientid: this.state.groupres.clientid,
-        groupapi: this.state.groupres.groupapi,
-        groupdescription: this.state.groupres.groupdescription,
-        groupid: this.state.groupres.groupid,
-        groupname: this.state.groupres.groupname
+        clientid: groupres.groupres.clientid,
+        groupapi: groupres.groupres.groupapi,
+        groupdescription: groupres.groupres.groupdescription,
+        groupid: groupres.groupres.groupid,
+        groupname: groupres.groupres.groupname
       }
       if (addusersmodal === true) {
         return (
@@ -333,12 +362,12 @@ class Group extends React.Component {
               <div className="modal-padding">
                <div className="modal-container">
                 <span className="closebtndark" onClick={() => {
-                  this.setState({
+                  setAddUsersModal({
                     addusersmodal: false
                   })
                 }}>&times;</span>
-                <h3>{"Add users to " + this.state.groupres.groupname}</h3>
-                <Addusersfilter cardstyle="suggest-card" buttonstyle="button-submit" data={data} api={this.state.groupres.groupapi}/>
+                <h3>{"Add users to " + groupres.groupres.groupname}</h3>
+                <FilterUsers cardstyle="suggest-card" buttonstyle="button-submit" data={data} api={groupres.groupres.groupapi}/>
                </div>
               </div>
              </div>
@@ -350,7 +379,7 @@ class Group extends React.Component {
       }
     }
 
-    LeaveGroupModal = ({leavegroupmodal}) => {
+  const LeaveGroupModal = ({leavegroupmodal}) => {
       if (leavegroupmodal === true) {
         return (
           <div>
@@ -358,19 +387,19 @@ class Group extends React.Component {
               <div className="container">
               <div className="modal-padding">
                 <span className="closebtnwhite" onClick={() => {
-                  this.setState({
+                  setLeaveGroupModal({
                     leavegroupmodal: false
                   })
                 }}>&times;</span>
                 <div className="title-padding">
-                  <h2>{"YOU ARE ABOUT TO LEAVE " + this.state.groupres.groupname}</h2>
+                  <h2>{"YOU ARE ABOUT TO LEAVE " + groupres.groupres.groupname}</h2>
                 </div>
                 <h5>Please be advised that you are about to leave this group, you are able to re-join by just requesting to be added but we want to make sure that this is what you want</h5>
               <div className="input-container-major">
               <div className="group">      
                      <input type="text" className="inputbar-white" onChange={(e) => {
                           if(e.target.value === firebase.auth().currentUser.email) {
-                            this.setState({
+                            setShow({
                               show: 'show'
                             })
                           }
@@ -382,20 +411,19 @@ class Group extends React.Component {
               </div>
               <div className="input-container">
                 <div className="float-right">
-                  <div className={this.state.show}>
+                  <div className={show.show}>
                   <button className="button-white-red" onClick={() => {
-                    fetch('/api/group/leavegroup/' + this.state.groupres.groupapi + '/' + this.state.groupres.groupid + '/' + firebase.auth().currentUser.uid , {
+                    fetch('/api/group/leavegroup/' + groupres.groupres.groupapi + '/' + groupres.groupres.groupid + '/' + firebase.auth().currentUser.uid , {
                       method: 'DELETE',
                       headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                       }
                     }).then(() => {
-                      console.log('this user was removed')
+                      props.history.push('/dash')
                     }).catch((error) => {
                       console.log(error);
                     })
-                    
                   }}><h4>LEAVE</h4></button>
                   </div>
                 </div>
@@ -410,13 +438,13 @@ class Group extends React.Component {
       }
     }
 
-    ShowAdminButton = ({admintrue}) => {
+   const ShowAdminButton = ({admintrue}) => {
       if (admintrue === true) {
         return (
           <div>
             <div className="button-padding">
              <button className="button-submit-blue" onClick={() => {
-                this.setState({
+                setAdminPortal({
                      adminportal: true
                   })
              }}>ADMIN PORTAL</button>
@@ -429,7 +457,28 @@ class Group extends React.Component {
     }
 
 
-    GroupDetails = ({groupdetails}) => {
+   const GroupDetails = ({groupdetails}) => {
+    const [usersdetails , setUsersDetails] = useState({
+      usersdetails: []
+   })
+    const subComponentMounted = useRef(null);
+    useEffect(() => {
+      subComponentMounted.current = true
+      if (subComponentMounted.current) {
+        if (groupdetails === true) {
+          fetch('/api/group/getusers/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid)
+          .then((res) => {
+            return res.json();
+          }).then((bod) => {
+            setUsersDetails({
+              usersdetails: bod
+            })
+          }).catch((error) => {
+            console.log(error);
+          })
+        }
+      }
+    }, [groupdetails])
       if (groupdetails === true) {
         return (
           <div>
@@ -438,29 +487,29 @@ class Group extends React.Component {
                <div className="modal-padding">
                 <div className="modal-header-blue">
                   <span className="closebtnwhite" onClick={() => {
-                    this.setState({
+                    setGroupDetails({
                       groupdetails: false
                     })
                   }}>&times;</span>
-                  <h2>{this.state.groupres.groupname + ' Details'}</h2>
+                  <h2>{groupres.groupres.groupname + ' Details'}</h2>
                 </div>
                 <div className="modal-container">
                   <div className="float-right">
-                    <h6>{this.state.groupres.users.length + ' users'}</h6>
+                    <h6>{groupres.groupres.users.length + ' users'}</h6>
                     <div className="button-padding">
                     <button className="button-submit" onClick={() => {
-                      this.setState({
+                      setAddUsersModal({
                         addusersmodal: true
                       })
                     }}>ADD USERS</button>
                     </div>
-                    <this.ShowAdminButton admintrue={this.state.adminuser}/>
+                    <ShowAdminButton admintrue={adminuser.adminuser}/>
                   </div>
                   <h3>GROUP MEMBERS</h3>
                   <div className="row">
                     {
-                      this.state.usersdetails.map(item => (
-                        <div key={this.state.usersdetails.indexOf(item)}>
+                      usersdetails.usersdetails.map(item => (
+                        <div key={usersdetails.usersdetails.indexOf(item)}>
                           <div className="user-group-name-container">
                             <div className="user-group-name  d-inline-flex p-2">
                                <h6>{item.firstname + ' ' + item.lastname + ' / ' + item.title}</h6>
@@ -472,7 +521,7 @@ class Group extends React.Component {
                   </div>
                   <div className="button-padding">
                     <button className="button-red" onClick={() => {
-                      this.setState({
+                      setLeaveGroupModal({
                         leavegroupmodal: true
                       })
                     }}>LEAVE GROUP</button>
@@ -488,18 +537,24 @@ class Group extends React.Component {
       }
     }
 
-    SubGroupNav = ({subgroups}) => {
+   const SubGroupNav = ({subgroups}) => {
       if (subgroups === true) {
         return (
           <div>
-             <h6 className="text-center" onClick={() => {
-             this.setState({
-              boxfiler: false,
-              wallpost: false,
-              groupconnectivity: false,
-              subcomp: true,
-              })
-            }}>SUBGROUPS</h6>
+             <p className="main-group-nav" onClick={() => {
+             setBoxFiler({
+               boxfiler: false
+             })
+             setWallPost({
+               wallpost: false
+             })
+             setGroupConnectivity({
+               groupconnectivity: false
+             })
+             setSubComp({
+               subcomp: true
+             })
+            }}>SUBGROUPS</p>
           </div>
         )
       } else {
@@ -507,135 +562,140 @@ class Group extends React.Component {
       }
     }
 
-
-
-    render() {
-      console.log(this.state);
        return (
             <div>
              <Authnav/>
              <div className="page">
-              <div className="group-navigation">
-                <div className="row">
-                 <div className="col-md-3">
-                 <h3>{this.state.groupres.groupname}</h3>
+               <div className="group-navigation">
+                 <h3>{groupres.groupres.groupname}</h3>
+                 <div className="group-component-padding">
+                 <div className="group-main-component">
+                 <p className="main-group-nav" onClick={() => {
+                        setBoxFiler({
+                          boxfiler: false
+                        })
+                        setWallPost({
+                          wallpost: true
+                        })
+                        setGroupConnectivity({
+                          groupconnectivity: false
+                        })
+                        setSubComp({
+                          subcomp: false
+                        })
+                    }}>POSTS</p>
                  </div>
-                 <div className="col-md-9">
-                  <div className="group-nav-padding">
-                  <div className="row">
-                  <div className="col-md-2">
-                    <h6 className="text-center" onClick={() => {
-                        this.setState({
-                          boxfiler: false,
-                          wallpost: true,
-                          groupconnectivity: false,
-                          subcomp: false,
-                          mainchat: false
+                 <div className="group-main-component">
+                 <p className="main-group-nav" onClick={() => {
+                      setBoxFiler({
+                        boxfiler: true
+                      })
+                      setWallPost({
+                        wallpost: false
+                      })
+                      setGroupConnectivity({
+                        groupconnectivity: false
+                      })
+                      setSubComp({
+                        subcomp: false
+                      })
+                    }}>BOXFILER</p>
+                 </div>
+                 <div className="group-main-component">
+                 <p className="main-group-nav" onClick={() => {
+                      setBoxFiler({
+                        boxfiler: false
+                      })
+                      setWallPost({
+                        wallpost: false
+                      })
+                      setGroupConnectivity({
+                        groupconnectivity: true
+                      })
+                      setSubComp({
+                        subcomp: false
+                      })
+                    }}>CONNECTIONS</p>
+                 </div>
+                 <div className="group-main-component">
+                   <p className="main-group-nav" onClick={() => {
+                        setBoxFiler({
+                          boxfiler: false
                         })
-                    }}>POSTS</h6>
-                  </div>
-                  <div className="col-md-2">
-                    <h6 className="text-center" onClick={() => {
-                        this.setState({
-                          boxfiler: true,
-                          wallpost: false,
-                          groupconnectivity: false,
-                          subcomp: false,
-                          mainchat: false
-
+                        setWallPost({
+                          wallpost: false
                         })
-                    }}>BOXFILER</h6>
-                  </div>
-                  <div className="col-md-2">
-                    <h6 className="text-center" onClick={() => {
-                        this.setState({
-                          boxfiler: false,
-                          wallpost: false,
-                          groupconnectivity: true,
-                          subcomp: false,
-                          mainchat: false
-
+                        setGroupConnectivity({
+                          groupconnectivity: false
                         })
-                    }}>CONNECTIONS</h6>
-                  </div>
-                  <div className="col-md-2">
-                    <h6 className="text-center" onClick={() => {
-                        this.setState({
-                          boxfiler: false,
-                          wallpost: false,
-                          groupconnectivity: false,
-                          subcomp: false,
-                          mainchat: true
+                        setSubComp({
+                          subcomp: false
                         })
-                    }}>MAINCHAT</h6>
-                  </div>
-                  <div className="col-md-2">
-                    <this.SubGroupNav subgroups={this.state.subgroups}/>
-                  </div>
-                  <div className="col-md-2">
-                    <h6 className="text-center" onClick={() => {
-                      this.setState({
+                    }}>MAINCHAT</p>
+                 </div>
+                 <div className="group-main-component">
+                 <SubGroupNav subgroups={subgroups.subgroups}/>
+                 </div>
+                 <div className="group-main-component">
+                 <p className="main-group-nav" onClick={() => {
+                      setGroupDetails({
                         groupdetails: true
                       })
-                    }}>DETAILS</h6>
-                  </div>
-                  </div>
-                  </div> 
+                    }}>DETAILS</p>
                  </div>
-                </div>
+                 </div>
               </div>
               <div className="grouppage">
                 <BoxFiler 
-                grouptype={this.state.groupres.typeofgroup} 
-                groupapi={this.props.match.params.groupapi} 
-                groupname={this.state.groupres.groupname}
-                groupid={this.state.groupres.groupid} 
-                boxfiler={this.state.boxfiler} 
-                boxfilerid={this.state.groupres.boxfilerid} />
+                grouptype={groupres.groupres.typeofgroup} 
+                groupapi={props.match.params.groupapi} 
+                groupname={groupres.groupres.groupname}
+                groupid={groupres.groupres.groupid} 
+                boxfiler={boxfiler.boxfiler} 
+                boxfilerid={groupres.groupres.boxfilerid} />
                 <PostsShow 
-                grouptype={this.state.groupres.typeofgroup} 
-                groupapi={this.props.match.params.groupapi} 
-                groupname={this.state.groupres.groupname} 
-                groupid={this.state.groupres.groupid} 
-                wallpostid={this.state.groupres.wallpostid} 
-                mainchat={this.state.wallpost} 
-                mainchatname={this.state.groupres.groupname}
-                usertitle={this.state.groupres.usertitle}
+                grouptype={groupres.groupres.typeofgroup} 
+                groupapi={props.match.params.groupapi} 
+                groupname={groupres.groupres.groupname} 
+                groupid={groupres.groupres.groupid} 
+                wallpostid={groupres.groupres.wallpostid} 
+                mainchat={wallpost.wallpost} 
+                mainchatname={groupres.groupres.groupname}
+                usertitle={groupres.groupres.usertitle}
                 />
                 <Connections 
-                grouptype={this.state.groupres.typeofgroup}
-                groupapi={this.props.match.params.groupapi} 
-                boxfilerid={this.state.groupres.boxfilerid} 
-                groupid={this.state.groupres.groupid} 
-                groupname={this.state.groupres.groupname} 
-                groupconnectivity={this.state.groupconnectivity}
-                groupclientid={this.state.groupres.clientid}
+                grouptype={groupres.groupres.typeofgroup}
+                groupapi={props.match.params.groupapi} 
+                boxfilerid={groupres.groupres.boxfilerid} 
+                groupid={groupres.groupres.groupid} 
+                groupname={groupres.groupres.groupname} 
+                groupconnectivity={groupconnectivity.groupconnectivity}
+                groupclientid={groupres.groupres.clientid}
                 />
                 <Subgroup
-                subgroupcomp={this.state.subcomp}
-                groupname={this.state.groupres.groupname}
-                groupid={this.state.groupres.groupid}
-                subgroupid = {this.state.groupres.subgroupsid}
-                grouptype = {this.state.groupres.typeofgroup}
-                groupapi={this.state.groupres.groupapi}
-                mainboxfilerid={this.state.groupres.boxfilerid}
+                subgroupcomp={subcomp.subcomp}
+                groupname={groupres.groupres.groupname}
+                groupid={groupres.groupres.groupid}
+                subgroupid = {groupres.groupres.subgroupsid}
+                grouptype = {groupres.groupres.typeofgroup}
+                groupapi={groupres.groupres.groupapi}
+                mainboxfilerid={groupres.groupres.boxfilerid}
                 />
                 <MainChatShow
-                mainchatshow={this.state.mainchat}
-                groupname={this.state.groupres.groupname}
-                mainchatid={this.state.groupres.mainchatid}
-                groupid={this.state.groupres.groupid}
-                grouptype={this.state.groupres.typeofgroup}
+                mainchatshow={mainchat.mainchat}
+                groupname={groupres.groupres.groupname}
+                mainchatid={groupres.groupres.mainchatid}
+                groupid={groupres.groupres.groupid}
+                grouptype={groupres.groupres.typeofgroup}
                 />
               </div>
-             </div>
-             <this.GroupDetails groupdetails={this.state.groupdetails}/>
-             <this.LeaveGroupModal leavegroupmodal={this.state.leavegroupmodal}/>
-             <this.Addusers addusersmodal={this.state.addusersmodal}/>
-             <this.AdminPortal adminportal={this.state.adminportal}/>
+             <GroupDetails groupdetails={groupdetails.groupdetails}/>
+             <LeaveGroupModal leavegroupmodal={leavegroupmodal.leavegroupmodal}/>
+             <Addusers addusersmodal={addusersmodal.addusersmodal}/>
+             <AdminPortal adminportal={adminportal.adminportal}/>
+            </div>
             </div>
         )
-    }
 }
 
 export default Group;

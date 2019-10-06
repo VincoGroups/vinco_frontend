@@ -1,49 +1,54 @@
-import React from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Authnav from './Authcomps/Authnav';
 import firebase from '../ServerSide/basefile';
 
-class Search extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            clientid: '',
-            clientgroupmodal: false,
-            response: [],
-            userresponse: []
+const Search = () => {
+   const [clientid, setClientId] = useState({
+       clientid: ''
+   })
+   const [response, setResponse] = useState({
+       response: []
+   })
+   const [clientgroupmodal, setClientGroupModal] = useState({
+       clientgroupmodal: false
+   })
+   const [userresponse, setUserResponse] = useState({
+     userresponse: []
+   })
+   
+   const componentMounted = useRef(null)
 
-        }
-    }
-
-   async componentDidMount() {
-    await firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-            fetch('/api/group/getclients/' + user.uid)
-            .then((res) => {
-                return res.json()
-            }).then((bod) => {
-                this.setState({
-                    userresponse: bod
-                })
-            }).catch((error) => {
-                console.log(error);
-            })
-        }
+   useEffect(() => {
+    componentMounted.current = true
+    if (componentMounted.current) {
+        fetch('/api/group/getclients/' + firebase.auth().currentUser.uid)
+    .then((res) => {
+        return res.json()
+    }).then((bod) => {
+        setUserResponse({
+            userresponse: bod
+        })
+    }).catch((error) => {
+        console.log(error);
     })
     }
 
-    StatusBtn = ({status}) => {
-        if (this.state.userresponse.includes(status) !== true) {
+    return () => {componentMounted.current = false}
+   })
+
+   const StatusBtn = ({status}) => {
+        if (userresponse.userresponse.includes(status) !== true) {
             return (
                 <div>
                   <button onClick={() => {
-                      fetch('/api/group/putrequest/' + this.state.response.groupid + '/' + firebase.auth().currentUser.uid, {
+                      fetch('/api/group/putrequest/' + response.response.groupid + '/' + firebase.auth().currentUser.uid, {
                           method: 'PUT',
                           headers:{
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
                           }
                       }).then(() => {
-                          this.setState({
+                          setClientGroupModal({
                               clientgroupmodal: false
                           })
                       }).catch((error) => {
@@ -63,7 +68,7 @@ class Search extends React.Component {
         }
     }
    
-    ClientGroupModal = ({clientgroupmodal}) => {
+   const ClientGroupModal = ({clientgroupmodal}) => {
         if (clientgroupmodal === true) {
             return (
                 <div>
@@ -72,16 +77,16 @@ class Search extends React.Component {
                     <div className="modal-padding">
                      <div className="modal-container">
                       <span className="closebtndark" onClick={() => {
-                          this.setState({
+                          setClientGroupModal({
                               clientgroupmodal: false
                           })
                       }}>&times;</span>
-                      <h2>{this.state.response.groupname}</h2>
+                      <h2>{response.response.groupname}</h2>
                       <div className="client-padding">
-                       <h5>{this.state.response.groupdescription}</h5>
+                       <h5>{response.response.groupdescription}</h5>
                       </div>
                       <div className="button-padding">
-                        <this.StatusBtn status={this.state.clientid}/>
+                        <StatusBtn status={clientid.clientid}/>
                       </div>
                      </div>
                     </div>
@@ -94,9 +99,6 @@ class Search extends React.Component {
         }
     }
 
-
-    render() {
-        console.log(this.state);
         return (
             <div>
                 <Authnav/>
@@ -107,9 +109,9 @@ class Search extends React.Component {
                   <div className="input-container">
                     <div className="group">      
                      <input type="text" className="inputbar" name="clientid" onChange={(e) => {
-                                    this.setState({
-                                    [e.target.name]: e.target.value
-                                    })
+                      setClientId({
+                         clientid: e.target.value
+                      })
                     }} required />
                      <span className="highlight"></span>
                      <span className="bar"></span>
@@ -117,12 +119,14 @@ class Search extends React.Component {
                   </div>
                  </div>
                  <div className="longbutton text-center" onClick={() => {
-                     fetch('/api/group/getclientgroup/' + this.state.clientid)
+                     fetch('/api/group/getclientgroup/' + clientid.clientid)
                      .then((res) => {
                          return res.json();
                      }).then((body) => {
-                         this.setState({
-                             response: body,
+                         setResponse({
+                            response: body
+                         })
+                         setClientGroupModal({
                              clientgroupmodal: true
                          })
                      }).catch((error) => {
@@ -132,10 +136,10 @@ class Search extends React.Component {
                   </div>
                  </div>
                 </div>
-                <this.ClientGroupModal clientgroupmodal={this.state.clientgroupmodal}/>
+                <ClientGroupModal clientgroupmodal={clientgroupmodal.clientgroupmodal}/>
             </div>
         )
-    }
+    
 }
 
 export default Search;

@@ -1,6 +1,6 @@
 import React from 'react';
 import firebase from '../../../ServerSide/basefile';
-import generateId from '../../../ServerSide/generate';
+import {generateId} from '../../../ServerSide/functions';
 import FileView from '../../Authcomps/Group/BoxFiler/Fileview';
 
 class SubBoxComments extends React.Component {

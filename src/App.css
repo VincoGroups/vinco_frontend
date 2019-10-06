@@ -632,19 +632,26 @@
 }
 
 .group-navigation {
-  padding-left: 20px; 
-  padding-right: 20px;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  background-color: white;
-  color: #0D47A1;
+  padding:15px; 
+  color: white;
+  position: fixed;
+  background-color: #2962FF;
+  height: 100vh;
 }
 
-.group-navigation h6:hover {
-  color: #2979FF;
+.group-component-padding {
+  padding-top: 20px;
+}
+
+.group-main-component {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.main-group-nav:hover {
+  color: #BBDEFB;
   cursor: pointer;
 }
-
 
 .no-pending {
   padding-top: 200px;
@@ -1082,6 +1089,17 @@
   padding: 7px;
 }
 
+.small-container {
+  padding: 7px;
+}
+
+.small-name-padding {
+  background-color: white;
+  color: #2962FF;
+  padding: 7px;
+  border-radius: 6px;
+}
+
 .comment-question {
   background-color: white;
   color: #2962FF;
@@ -1249,9 +1267,9 @@
 }
 
 .grouppage {
-  padding-left: 40px;
-  padding-right: 40px;
+  margin-left: 170px;
   color: #0D47A1;
+  padding: 20px;
 }
 
 .connections-page {
@@ -1395,5 +1413,140 @@
    height: 400px;
    background-color: white;
  }
+
+ .reminder-padding {
+   padding: 10px;
+ }
+ 
+ .reminder-card-headers {
+   background-color: #2962FF;
+   color: white;
+   padding: 10px;
+   width: 100%;
+ }
+
+ .reminder-container {
+  padding: 70px;
+  background-color: white;
+  color: #2962FF;
+ }
+
+ .reminder-container:hover {
+   background-color: #EEEEEE;
+ }
+
+ .reminder-container-details {
+  padding: 70px;
+ }
+
+ .file-viewnote {
+   position: relative;
+ }
+
+ .tag-1 {
+  position:absolute;
+  background: #3E444E;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  border:2px solid #FFFFFF;
+  height:22px;
+  width:22px;
+  padding:11px;
+  z-index:2;
+ }
+
+ .image-positioning {
+   position: relative;
+ }
+
+ .notetag {
+  position:absolute;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  height:22px;
+  width:22px;
+  padding:11px;
+  z-index:2;
+ }
+
+ .card-note {
+   padding: 30px;
+ }
+
+.note-background-1{
+  background-color: #2962FF;
+  color: white;
+}
+
+.note-background-1:hover {
+  background-color: #2979FF
+}
+
+.note-background-2{
+  background-color: #0D47A1;
+  color: white;
+}
+
+.note-background-2:hover {
+  background-color: #1976D2
+}
+
+.note-background-3{
+  background-color: #2979FF;
+  color: white;
+}
+
+.note-background-3:hover {
+  background-color: #2962FF
+}
+
+.note-background-4{
+  background-color: #82B1FF;
+  color: white;
+}
+
+.note-background-4:hover {
+  background-color: #448AFF
+}
+
+.note-background-5{
+  background-color: #BBDEFB;
+  color: #0D47A1;
+}
+
+.note-background-5:hover {
+  background-color: #1976D2
+}
+
+.note-background-6{
+  background-color: #E1F5FE  ;
+  color: #0D47A1;
+}
+
+.note-background-6:hover {
+  background-color: #B3E5FC
+}
+
+.note-background-7{
+  background-color: #B3E5FC  ;
+  color: #0D47A1;
+}
+
+.note-background-7:hover {
+  background-color: #E1F5FE
+}
+
+.note-background-8{
+  background-color: #B3E5FC  ;
+  color: #0D47A1;
+}
+
+.note-background-8:hover {
+  background-color: #E1F5FE
+}
+
+
 
  

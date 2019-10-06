@@ -1,4 +1,4 @@
-const generateId = (length) => {
+export const generateId = (length) => {
     let result = '';
     const characters  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.~_';
     const charactersLength = characters.length;
@@ -8,4 +8,13 @@ const generateId = (length) => {
     return result;
 }
 
-export default generateId;
+export const MinimizeBigTitle = (text) => {
+    let stringvalue = null
+    if (text.length > 10) {
+        stringvalue = text.substring(0, 11) + '...'
+    } else {
+        stringvalue = text
+    } 
+
+    return stringvalue
+}

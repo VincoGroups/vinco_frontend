@@ -1,10 +1,12 @@
 import React from 'react';
+/*
 import generateId from '../../../../ServerSide/generate';
 import firebase from '../../../../ServerSide/basefile';
 import Loadingblue from '../../../../NonAuth/Comps/Loadingblue'
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 let stompClient = null;
+/*
 class Mainchat extends React.Component {
     constructor(props) {
         super(props);
@@ -139,18 +141,22 @@ class Mainchat extends React.Component {
         )
     }
 }
+*/
 
 const MainChatShow = ({mainchatshow , groupname , mainchatid , grouptype, groupid}) => {
-    if (mainchatshow === true) {
-        return (
-            <div>
-            <div className="group-page">
-            <Mainchat 
+    /*
+    <Mainchat 
               groupname = {groupname}
               mainchatid={mainchatid} 
               grouptype={grouptype}
               groupid={groupid}
               />
+    */
+    if (mainchatshow === true) {
+        return (
+            <div>
+            <div className="group-page">
+            
             </div>
             </div>
         )

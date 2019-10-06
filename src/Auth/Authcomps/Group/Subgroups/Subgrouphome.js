@@ -1,6 +1,6 @@
 import React from 'react';
 import Adduserssubgroup from './functions/Adduserssubgroup';
-import generateId from '../../../../ServerSide/generate';
+import {generateId} from '../../../../ServerSide/functions';
 import firebase from '../../../../ServerSide/basefile';
 import {NavLink} from 'react-router-dom';
 

@@ -1,7 +1,7 @@
 import React, {useState , useEffect} from 'react';
 import firebase from '../basefile';
-import generateId from '../generate';
-const Addusersfilter = ({cardstyle , buttonstyle , data , api}) => {
+import {generateId} from '../functions';
+const FilterUsers = ({cardstyle , buttonstyle , data , api}) => {
 
     const [allusers , setUsers] = useState({
         allusers: []
@@ -94,4 +94,4 @@ const Addusersfilter = ({cardstyle , buttonstyle , data , api}) => {
     )
 }
 
-export default Addusersfilter;
+export default FilterUsers;
