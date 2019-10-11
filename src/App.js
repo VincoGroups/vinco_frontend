@@ -11,6 +11,7 @@ import Register from './NonAuth/Register';
 import Group from './Auth/Authcomps/Group/Group';
 import Pendinggroups from './Auth/Pendinggroups';
 import SubHome from './Auth/Authcomps/Subgroup/SubHome';
+import ConnectionPage from './Auth/Authcomps/Connections/Connectionpage';
 
 const App = () => {
   const [auth, setAuth] = useState({
@@ -49,6 +50,7 @@ const App = () => {
         <PrivateRoute path="/group/:groupapi" component={Group} isAuthenticated={auth.auth} exact/>
         <PrivateRoute path="/pending" component={Pendinggroups} isAuthenticated={auth.auth} exact/>
         <PrivateRoute path="/subgroup/:grouptype/:mainapi/:subapi" component={SubHome} isAuthenticated={auth.auth} exact/>
+        <PrivateRoute path="/connection/:connectionapi" component={ConnectionPage} isAuthenticated={auth.auth} exact/>
       </BrowserRouter>
     </div>
   );

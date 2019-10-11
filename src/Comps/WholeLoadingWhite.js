@@ -1,16 +1,24 @@
 import React from 'react'
 
-const LoadingUserPage = ({loading , username}) => {
+const LoadingModalPage = ({loading , content}) => {
     if (loading === true) {
         return (
             <div>
-                <div className="modal-edu-white-total">
-                  <div className="container">
-                  <div className="d-flex justify-content-center">
-                    <div className="loadingwhite"></div>
-                    <h1 className="text-center">{"Loading content for " + username}</h1>
-                   </div>
+                <div className="modal-edu">
+                 <div className="container">
+                  <div className="modal-padding">
+                    <div className="modal-container">
+                      <div className="modal-loading-page">
+                        <div className="d-flex justify-content-center">
+                            <div className="loadingblue"></div>
+                        </div>
+                        <div className="loading-title-padding">
+                        <h1 className="text-center">{content}</h1>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+                 </div>
                 </div>
             </div>
         )
@@ -19,4 +27,4 @@ const LoadingUserPage = ({loading , username}) => {
     }
 }
 
-export default LoadingUserPage
+export default LoadingModalPage;

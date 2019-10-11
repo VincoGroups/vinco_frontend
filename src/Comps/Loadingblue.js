@@ -8,8 +8,8 @@ const LoadingBlue = ({loading , statement}) => {
                 <div className="loading-comp">
                 <div className="d-flex justify-content-center">
                     <div className="loadingblue"></div>
-                    <div className="title-padding">
-                    <h4 className="text-center">{statement}</h4>
+                    <div className="loading-title-padding">
+                     <h4 className="text-center">{statement}</h4>
                     </div>
                 </div>
                 </div>

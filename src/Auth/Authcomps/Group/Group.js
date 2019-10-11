@@ -1,15 +1,14 @@
-import React, {useState , useEffect, useRef}from 'react';
+import React, {useState , useEffect, useRef, useCallback}from 'react';
 import Authnav from '../Authnav';
 import BoxFiler from './BoxFiler/BoxFiler';
-import PostsShow from './Posts/Posts';
-import Connections from './Connections/Connections';
+import ConnectionsHome from './Connections/Connectionhome';
 import firebase from '../../../ServerSide/basefile';
 import FilterUsers from '../../../ServerSide/Filters/FilterUsersAdd';
 import Subgroup from './Subgroups/Subgrouphome';
-import MainChatShow from './Mainchat/Mainchat';
+import Posts from './Posts/Posts';
+//import MainChatShow from './Mainchat/Mainchat';
 
 const Group = (props) => {
-
  const [groupres, setGroupRes] = useState({
     groupres: []
  })
@@ -25,8 +24,8 @@ const [groupconnectivity , setGroupConnectivity] = useState({
 const [subcomp , setSubComp] = useState({
    subcomp: false
 })
-const [mainchat , setMainchat] = useState({
-   mainchat: false
+const [userdetails , setUsersDetails] = useState({
+  userdetails: []
 })
 const [groupdetails , setGroupDetails] = useState({
    groupdetails: false
@@ -43,82 +42,98 @@ const [addusersmodal , setAddUsersModal] = useState({
 const [subgroups , setSubGroups] = useState({
    subgroups: false
 })
-const [adminuser , setAdminUser] = useState({
-   adminuser: false
-})
-const [adminportal , setAdminPortal] = useState({
-    adminportal: false
-})
       
     const componentMounted = useRef(null);
-
     useEffect(() => {
       componentMounted.current = true;
-      if (componentMounted.current) {
+      const {groupapi} = props.match.params;
         setTimeout(() => {
-        const {groupapi} = props.match.params;
-        fetch('/api/group/checkusergroup/' + groupapi + '/' + firebase.auth().currentUser.uid)
-       .then((res) => {
-         return res.json();
-       }).then((bod) => {
-         if (bod.userresponse === true) {
-           fetch('/api/group/' + groupapi + '/' + firebase.auth().currentUser.uid)
-           .then((res) => {
-               return res.json();
-           }).then((bod) => {
-               setGroupRes({
-                   groupres: bod
-               })
-           }).then(() => {
-             if (groupres.groupres.grouptype === "ORGANIZATIONALGROUPS") {
-               setSubGroups({
-                 subgroups: true
-               })
-             } else {
-               setSubGroups({
-                 subgroups: false
-               })
-             }
-           }).catch((error) => {
-               console.log(error)
-           })
-         } else if (bod.userresponse === false) {
-           props.history.push('/dash');
-         }
-        }).catch((error) => {
-          console.log(error);
-        })
+        if (componentMounted.current) {
+          fetch('/api/group/checkusergroup/' + groupapi + '/' + firebase.auth().currentUser.uid)
+         .then((res) => {
+           return res.json();
+         }).then((bod) => {
+           if (bod.userresponse === true) {
+             fetch('/api/group/getgroupdetails/' + groupapi + '/' + firebase.auth().currentUser.uid)
+             .then((res) => {
+                 return res.json();
+             }).then((bod) => {
+                 setGroupRes({
+                     groupres: bod
+                 })
+             }).then(() => {
+               if (groupres.groupres.grouptype === "ORGANIZATIONALGROUPS") {
+                 setSubGroups({
+                   subgroups: true
+                 })
+               } else {
+                 setSubGroups({
+                   subgroups: false
+                 })
+               }
+             }).catch((error) => {
+                 console.log(error)
+             })
+           } else if (bod.userresponse === false) {
+             props.history.push('/dash');
+           }
+          }).catch((error) => {
+            console.log(error);
+          })
+  
 
-        if (groupres.groupres.groupid !== undefined) {
-          fetch('/api/group/checkuseradmin/'+ groupres.groupres.groupid + '/' + firebase.auth().currentUser.uid)
-        .then((res) => {
-          return res.json();
-        }).then((bod) => {
-          if (bod === true) {
-            setAdminUser({
-              adminuser: true
+          fetch('/api/group/getusers/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid)
+          .then((res) => {
+            return res.json();
+          }).then((bod) => {
+            setUsersDetails({
+              userdetails: bod
             })
-          } else {
-            setAdminUser({
-              adminuser: false
-            })
+          }).catch((error) => {
+            console.log(error);
+          })
           }
-        }).catch((error) => {
-          console.log(error);
-        })
-        }
-
         }, 500);
-      }  
       return () => {componentMounted.current = false}  
-    }, [groupres.groupres.groupid,groupres.groupres.grouptype,props.history,props.match.params])
+    }, [groupres.groupres.groupid ,groupres.groupres.grouptype ,props.history , props.match.params])
 
-  const AdminPortal = ({adminportal}) => {
-      const [adminportalusers , setAdminPortalUsers] = useState({
-        adminportalusers: []
-      })
-      const [admintotalusers , setAdminTotalUsers] = useState({
-        admintotalusers: []
+
+   const Addusers = ({addusersmodal}) => {
+      const data = {
+        clientid: groupres.groupres.clientid,
+        groupapi: groupres.groupres.groupapi,
+        groupdescription: groupres.groupres.groupdescription,
+        groupid: groupres.groupres.groupid,
+        groupname: groupres.groupres.groupname
+      }
+      if (addusersmodal === true) {
+        return (
+          <div>
+            <div className="modal-edu-white">
+             <div className="container">
+              <div className="modal-padding">
+               <div className="modal-container">
+                <span className="closebtndark" onClick={() => {
+                  setAddUsersModal({
+                    addusersmodal: false
+                  })
+                }}>&times;</span>
+                <h3>{"Add users to " + groupres.groupres.groupname}</h3>
+                <FilterUsers cardstyle="suggest-card" buttonstyle="button-submit" data={data} api={groupres.groupres.groupapi}/>
+               </div>
+              </div>
+             </div>
+            </div>
+          </div>
+        )
+      } else {
+        return null;
+      }
+    }
+
+    const AdminPortal = ({adminportal}) => {
+      const [showAdminPage , setAdminPage] = useState({
+        adminpage: false
       })
       const [showAdminOptions, setAdminOptions] = useState({
         adminoptions: true
@@ -126,20 +141,26 @@ const [adminportal , setAdminPortal] = useState({
       const [showAdminTitle, setAdminTitles] = useState({
         admintitle: false
       })
-
-      const subComponentMounted = useRef(null);
-
+      const [nonadminusers, setNonAdminUsers] = useState({
+        nonadminusers: []
+      })
+      const [titleadminusers, setTitleAdminUsers] = useState({
+        titleadminusers: []
+      })
+    
+      const componentMounted = useRef(null);
+    
       useEffect(() => {
-        subComponentMounted.current = true;
-        if (subComponentMounted.current) {
-          if (adminportal === true) {
-            setTimeout(() => {
+        componentMounted.current = true;
+        setTimeout(() => {
+          if (componentMounted.current) {
+            if (adminportal !== true) {
               fetch('/api/group/getportalusers/' + groupres.groupres.groupid)
               .then((res) => {
                 return res.json();
               }).then((bod) => {
-                setAdminPortalUsers({
-                  adminportalusers: bod
+                setNonAdminUsers({
+                  nonadminusers: bod
                 })
               }).catch((error) => {
                 console.log(error);
@@ -147,28 +168,29 @@ const [adminportal , setAdminPortal] = useState({
     
               fetch('/api/group/getusers/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid)
               .then((res) => {
-                return res.json();
+                return res.json()
               }).then((body) => {
-                setAdminTotalUsers({
-                  admintotalusers: body
+                setTitleAdminUsers({
+                  titleadminusers: body
                 })
               }).catch((error) => {
                 console.log(error);
               })
-              }, 500);
+             }
           }
-        } 
-        return () => {subComponentMounted.current = false}
-       }, [adminportal])
-
+        }, 400);
+    
+        return () => { componentMounted.current = false }
+      }, [adminportal])
+    
        const OutputOptionsUser = ({adminoptions}) => {
          if (adminoptions === true) {
-            if (adminportalusers.adminportalusers.length > 0) {
+            if (nonadminusers.nonadminusers.length > 0) {
               return (
               <div>
                     {
-                        adminportalusers.adminportalusers.map((item) => (
-                          <div key={adminportalusers.adminportalusers.indexOf(item)}>
+                       nonadminusers.nonadminusers.map((item) => (
+                          <div key={nonadminusers.nonadminusers.indexOf(item)}>
                             <div className="user-container">
                             <div className="row">
                               <div className="col-md-8">
@@ -183,8 +205,8 @@ const [adminportal , setAdminPortal] = useState({
                                     })
                                     .then((body) => {
                                       console.log('user has been made admin')
-                                      setAdminPortalUsers({
-                                        adminportalusers: body
+                                      setNonAdminUsers({
+                                        nonadminusers: body
                                       })
                                     }).catch((error) => {
                                       console.log(error);
@@ -201,8 +223,8 @@ const [adminportal , setAdminPortal] = useState({
                                         return res.json();
                                       }).then((bod) => {
                                         console.log(bod);
-                                        setAdminPortalUsers({
-                                          adminportalusers: bod
+                                        setNonAdminUsers({
+                                          nonadminusers: bod
                                         })
                                       }).catch((error) => {
                                         console.log(error);
@@ -232,15 +254,15 @@ const [adminportal , setAdminPortal] = useState({
            return null;
          }
        }
-
+    
        const OutputTitleUsers = ({outputtitle}) => {
         if (outputtitle === true) {
-          if (admintotalusers.admintotalusers.length > 0) {
+          if (titleadminusers.titleadminusers.length > 0) {
             return (
               <div>
                 {
-                  admintotalusers.admintotalusers.map((item) => (
-                    <div key={adminportalusers.adminportalusers.indexOf(item)}>
+                  titleadminusers.titleadminusers.map((item) => (
+                    <div key={titleadminusers.titleadminusers.indexOf(item)}>
                       <div className="user-container-blue">
                         <div className="row">
                          <div className="col-md-8">
@@ -251,14 +273,19 @@ const [adminportal , setAdminPortal] = useState({
                           <div className="input-container">
                            <input type="text" className="input-regular-white" placeholder="Give the user title" onKeyDown={(e) => {
                             if (e.keyCode === 13) {
-                              fetch('/api/group/giveusertitle/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid + '/' + item.useruid , {
-                                method: 'POST',
+                              fetch('/api/group/giveusertitle/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid  + '/' + item.useruid , {
+                                method: 'PUT',
                                 body: e.target.value
-                              }).then((res) => {
-                                return res.json();
-                              }).then((body) => {
-                                setAdminTotalUsers({
-                                  admintotalusers: body
+                              }).then(() => {
+                                fetch('/api/group/getusers/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid)
+                                .then((res) => {
+                                  return res.json()
+                                }).then((body) => {
+                                  setTitleAdminUsers({
+                                    titleadminusers: body
+                                  })
+                                }).catch((error) => {
+                                  console.log(error);
                                 })
                               }).catch((error) => {
                                 console.log(error);
@@ -285,93 +312,79 @@ const [adminportal , setAdminPortal] = useState({
           return null;
         }
        }
-
-      if (adminportal === true) {
-        return (
-          <div>
-            <div className="modal-edu">
-              <div className="container">
-               <div className="modal-padding">
-                <div className="modal-container">
-                  <span className="closebtndark" onClick={() => {
-                    this.setState({
-                      adminportal: false
-                    })
-                  }}>&times;</span>
-                  <h3>ADMIN PORTAL</h3>
-                  <div className="row">
-                    <div className="col-md-12">
-                    <div className="float-left">
-                      <div className="row">
-                        <div className="col-md-6">
-                        <div className="button-padding">
-                        <button className="button-submit" onClick={() => {
-                          setAdminOptions({
-                            adminoptions: true
-                          })
-                          setAdminTitles({
-                            admintitle: false
-                          })
-                        }}>OPTIONS</button>
-                      </div>
-                      </div>
-                      <div className="col-md-6">
-                      <div className="button-padding">
-                        <button className="button-submit-blue" onClick={() => {
-                          setAdminTitles({
-                            admintitle: true
-                          })
-                          setAdminOptions({
-                            adminoptions: false
-                          })
-                        }}>TITLES</button>
-                      </div>
-                      </div>
-                      </div>
-                   </div>
-                    </div>
-                  </div>
-                  <div className="input-container">
-                    <OutputOptionsUser adminoptions={showAdminOptions.adminoptions}/>
-                    <OutputTitleUsers outputtitle={showAdminTitle.admintitle}/>
-                  </div>
-                </div>
-               </div>
-              </div>
-            </div>
-          </div>
-        )
-      } else {
-        return null;
-      }
-    }
-
-   const Addusers = ({addusersmodal}) => {
-      const data = {
-        clientid: groupres.groupres.clientid,
-        groupapi: groupres.groupres.groupapi,
-        groupdescription: groupres.groupres.groupdescription,
-        groupid: groupres.groupres.groupid,
-        groupname: groupres.groupres.groupname
-      }
-      if (addusersmodal === true) {
-        return (
-          <div>
+    
+    
+       const AdminPage = ({adminpage}) => {
+         if (adminpage === true) {
+           return (
             <div className="modal-edu-white">
-             <div className="container">
-              <div className="modal-padding">
-               <div className="modal-container">
-                <span className="closebtndark" onClick={() => {
-                  setAddUsersModal({
-                    addusersmodal: false
+            <div className="container">
+             <div className="modal-padding">
+              <div className="modal-container">
+              <span className="closebtndark" onClick={() => {
+                  setAdminPage({
+                    adminpage: false
                   })
                 }}>&times;</span>
-                <h3>{"Add users to " + groupres.groupres.groupname}</h3>
-                <FilterUsers cardstyle="suggest-card" buttonstyle="button-submit" data={data} api={groupres.groupres.groupapi}/>
-               </div>
+                <h3>ADMIN PORTAL</h3>
+                <div className="row">
+                  <div className="col-md-12">
+                  <div className="float-left">
+                    <div className="row">
+                      <div className="col-md-6">
+                      <div className="button-padding">
+                      <button className="button-submit" onClick={() => {
+                        setAdminOptions({
+                          adminoptions: true
+                        })
+                        setAdminTitles({
+                          admintitle: false
+                        })
+                      }}>OPTIONS</button>
+                    </div>
+                    </div>
+                    <div className="col-md-6">
+                    <div className="button-padding">
+                      <button className="button-submit-blue" onClick={() => {
+                        setAdminTitles({
+                          admintitle: true
+                        })
+                        setAdminOptions({
+                          adminoptions: false
+                        })
+                      }}>TITLES</button>
+                    </div>
+                    </div>
+                    </div>
+                 </div>
+                  </div>
+                </div>
+                <div className="input-container">
+                  <OutputOptionsUser adminoptions={showAdminOptions.adminoptions}/>
+                  <OutputTitleUsers outputtitle={showAdminTitle.admintitle}/>
+                </div>
               </div>
              </div>
             </div>
+          </div>
+           )
+         } else {
+           return null;
+         }
+       }
+    
+    
+      if (adminportal === true) {
+        return (
+          <div>
+            <div className="button-padding">
+               <button className="button-submit-blue" onClick={() => {
+                  setAdminPage({
+                       adminpage: true
+                    })
+               }}>ADMIN PORTAL</button>
+            </div>
+            <AdminPage adminpage={showAdminPage.adminpage}/>
           </div>
         )
       } else {
@@ -438,47 +451,49 @@ const [adminportal , setAdminPortal] = useState({
       }
     }
 
-   const ShowAdminButton = ({admintrue}) => {
-      if (admintrue === true) {
-        return (
-          <div>
-            <div className="button-padding">
-             <button className="button-submit-blue" onClick={() => {
-                setAdminPortal({
-                     adminportal: true
-                  })
-             }}>ADMIN PORTAL</button>
-             </div>
-          </div>
-        )
-      } else {
-        return null;
-      }
-    }
-
-
    const GroupDetails = ({groupdetails}) => {
-    const [usersdetails , setUsersDetails] = useState({
-      usersdetails: []
-   })
-    const subComponentMounted = useRef(null);
-    useEffect(() => {
-      subComponentMounted.current = true
-      if (subComponentMounted.current) {
-        if (groupdetails === true) {
-          fetch('/api/group/getusers/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid)
-          .then((res) => {
-            return res.json();
-          }).then((bod) => {
-            setUsersDetails({
-              usersdetails: bod
+    const [adminuser , setAdminUser] = useState({
+      adminuser: false
+    })
+
+    const subComp = useRef(null);
+
+    const fetchAdminStatus = useCallback(() => {
+      if (groupdetails === true) {
+        if (subComp.current) {
+          if (groupres.groupres.grouptype !== undefined){
+            fetch('/api/group/checkuseradmin/'+ groupres.groupres.groupid + '/' + firebase.auth().currentUser.uid)
+            .then((res) => {
+              return res.json();
+            }).then((bod) => {
+              if (bod === true) {
+                setAdminUser({
+                  adminuser: true
+                })
+              } else {
+                setAdminUser({
+                  adminuser: false
+                })
+              }
+            }).catch((error) => {
+              console.log(error);
             })
-          }).catch((error) => {
-            console.log(error);
-          })
+          }
         }
       }
+
+      return () => {subComp.current = false}
+
     }, [groupdetails])
+
+    useEffect(() => {
+      subComp.current = true
+      setTimeout(() => {
+        fetchAdminStatus()
+      }, 500);
+      return () => {subComp.current = false}
+    }, [fetchAdminStatus])
+
       if (groupdetails === true) {
         return (
           <div>
@@ -503,13 +518,13 @@ const [adminportal , setAdminPortal] = useState({
                       })
                     }}>ADD USERS</button>
                     </div>
-                    <ShowAdminButton admintrue={adminuser.adminuser}/>
+                    <AdminPortal adminportal={adminuser.adminuser} groupid={groupres.groupres.groupid} grouptype={groupres.groupres.grouptype}/>
                   </div>
                   <h3>GROUP MEMBERS</h3>
                   <div className="row">
                     {
-                      usersdetails.usersdetails.map(item => (
-                        <div key={usersdetails.usersdetails.indexOf(item)}>
+                      userdetails.userdetails.map(item => (
+                        <div key={userdetails.userdetails.indexOf(item)}>
                           <div className="user-group-name-container">
                             <div className="user-group-name  d-inline-flex p-2">
                                <h6>{item.firstname + ' ' + item.lastname + ' / ' + item.title}</h6>
@@ -536,6 +551,16 @@ const [adminportal , setAdminPortal] = useState({
         return null;
       }
     }
+
+    /*
+                  <MainChatShow
+                mainchatshow={mainchat.mainchat}
+                groupname={groupres.groupres.groupname}
+                mainchatid={groupres.groupres.mainchatid}
+                groupid={groupres.groupres.groupid}
+                grouptype={groupres.groupres.typeofgroup}
+                />
+    */
 
    const SubGroupNav = ({subgroups}) => {
       if (subgroups === true) {
@@ -566,8 +591,10 @@ const [adminportal , setAdminPortal] = useState({
             <div>
              <Authnav/>
              <div className="page">
+               <div className="group-title-page">
+                <h3>{groupres.groupres.groupname}</h3>
+               </div>
                <div className="group-navigation">
-                 <h3>{groupres.groupres.groupname}</h3>
                  <div className="group-component-padding">
                  <div className="group-main-component">
                  <p className="main-group-nav" onClick={() => {
@@ -653,24 +680,17 @@ const [adminportal , setAdminPortal] = useState({
                 groupid={groupres.groupres.groupid} 
                 boxfiler={boxfiler.boxfiler} 
                 boxfilerid={groupres.groupres.boxfilerid} />
-                <PostsShow 
-                grouptype={groupres.groupres.typeofgroup} 
-                groupapi={props.match.params.groupapi} 
-                groupname={groupres.groupres.groupname} 
+                <Posts 
+                grouptype={groupres.groupres.grouptype} 
                 groupid={groupres.groupres.groupid} 
                 wallpostid={groupres.groupres.wallpostid} 
-                mainchat={wallpost.wallpost} 
-                mainchatname={groupres.groupres.groupname}
-                usertitle={groupres.groupres.usertitle}
+                visible={wallpost.wallpost}
                 />
-                <Connections 
-                grouptype={groupres.groupres.typeofgroup}
-                groupapi={props.match.params.groupapi} 
-                boxfilerid={groupres.groupres.boxfilerid} 
-                groupid={groupres.groupres.groupid} 
-                groupname={groupres.groupres.groupname} 
-                groupconnectivity={groupconnectivity.groupconnectivity}
+                <ConnectionsHome
+                connectionhome={groupconnectivity.groupconnectivity}
                 groupclientid={groupres.groupres.clientid}
+                groupname={groupres.groupres.groupname}
+                groupid={groupres.groupres.groupid}
                 />
                 <Subgroup
                 subgroupcomp={subcomp.subcomp}
@@ -681,18 +701,10 @@ const [adminportal , setAdminPortal] = useState({
                 groupapi={groupres.groupres.groupapi}
                 mainboxfilerid={groupres.groupres.boxfilerid}
                 />
-                <MainChatShow
-                mainchatshow={mainchat.mainchat}
-                groupname={groupres.groupres.groupname}
-                mainchatid={groupres.groupres.mainchatid}
-                groupid={groupres.groupres.groupid}
-                grouptype={groupres.groupres.typeofgroup}
-                />
               </div>
              <GroupDetails groupdetails={groupdetails.groupdetails}/>
              <LeaveGroupModal leavegroupmodal={leavegroupmodal.leavegroupmodal}/>
              <Addusers addusersmodal={addusersmodal.addusersmodal}/>
-             <AdminPortal adminportal={adminportal.adminportal}/>
             </div>
             </div>
         )
