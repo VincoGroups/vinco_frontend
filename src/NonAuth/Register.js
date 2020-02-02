@@ -1,22 +1,27 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Nav from './Comps/Nav';
 import firebase from '../ServerSide/basefile';
 import {Redirect} from 'react-router-dom';
 import validator from 'email-validator';
-class Register extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            firstname: '',
-            lastname: '',
-            email: '',
-            password: '',
-            loggedin: false
-        }
-    }
+const Register = () => {
+    const [firstname, setFirstName] = useState({
+        firstname: ''
+    })
+    const [lastname, setLastName] = useState({
+        lastname: ''
+    })
+    const [email, setEmail] = useState({
+        email: ''
+    })
+    const [password, setPassword] = useState({
+        password: ''
+    })
+    const [loggedin, setLoggedIn] = useState({
+        loggedin: false
+    })
 
-    ShowValidEmailResponse = () => {
-        if (validator.validate(this.state.email) === true && this.state.email.length > 0) { 
+    const ShowValidEmailResponse = () => {
+        if (validator.validate(email.email) === true && email.email.length > 0) { 
             return (
                 <div>
                  <div className="title-padding">
@@ -24,7 +29,7 @@ class Register extends React.Component {
                  </div>
                 </div>
             )
-        } else if (validator.validate(this.state.email) === false && this.state.email.length > 0) { 
+        } else if (validator.validate(email.email) === false && email.email.length > 0) { 
             return (
                 <div>
                   <div className="title-padding">
@@ -37,12 +42,12 @@ class Register extends React.Component {
         }
     }
 
-    RegisterUser = () => {
+    const RegisterUser = () => {
         const data = {
-            firstname: this.state.firstname,
-            lastname: this.state.lastname,
-            email: this.state.email,
-            password: this.state.password
+            firstname: firstname.firstname,
+            lastname: lastname.lastname,
+            email: email.email,
+            password: password.password
         }
         fetch('/user/createuser' , {
             method: 'POST',
@@ -54,11 +59,11 @@ class Register extends React.Component {
         }).then((response) => {
             return response.json();
         }).then((body) => {
-            console.log(body);
             if(body === true) {
-                firebase.auth().signInWithEmailAndPassword(data.email , data.password)
+                console.log(body);
+                firebase.auth().signInWithEmailAndPassword(email.email , password.password)
                 .then(() => {
-                    this.setState({
+                    setLoggedIn({
                         loggedin: true
                     })
                 }).catch((error) => {
@@ -69,15 +74,13 @@ class Register extends React.Component {
             console.log(error)
         })
     }
-
-    render() {
-        const {loggedin} = this.state
-        if (loggedin) {
+        console.log(loggedin.loggedin)
+        if (loggedin.loggedin) {
             return <Redirect to="/dash" />
         }
         return (
             <div>
-                <Nav/>
+            <Nav/>
              <div className="page">
               <div className="register-page">
                <div className="container">
@@ -87,8 +90,8 @@ class Register extends React.Component {
                  <div className="input-container">
                      <div className="group">   
                         <input type="text" className="inputbar" name="firstname" onChange={(e) => {
-                            this.setState({
-                              [e.target.name]: e.target.value
+                            setFirstName({
+                              firstname: e.target.value
                             })
                         }} required />
                         <span className="highlight"></span>
@@ -101,8 +104,8 @@ class Register extends React.Component {
                  <div className="input-container">
                      <div className="group">      
                         <input type="text" className="inputbar" name="lastname" onChange={(e) => {
-                            this.setState({
-                              [e.target.name]: e.target.value
+                            setLastName({
+                              lastname: e.target.value
                             })
                         }} required />
                         <span className="highlight"></span>
@@ -113,11 +116,11 @@ class Register extends React.Component {
                  </div>
                 </div>
                 <div className="input-container">
-                    <this.ShowValidEmailResponse/>
+                   <ShowValidEmailResponse/>
                      <div className="group">      
                         <input type="text" className="inputbar" name="email" onChange={(e) => {
-                            this.setState({
-                              [e.target.name]: e.target.value
+                            setEmail({
+                              email: e.target.value
                             })
                         }} required />
                         <span className="highlight"></span>
@@ -128,8 +131,8 @@ class Register extends React.Component {
                   <div className="input-container">
                      <div className="group">      
                         <input type="password" className="inputbar" name="password" onChange={(e) => {
-                            this.setState({
-                              [e.target.name]: e.target.value
+                            setPassword({
+                              password: e.target.value
                             })
                         }} required />
                         <span className="highlight"></span>
@@ -138,14 +141,13 @@ class Register extends React.Component {
                       </div>
                   </div>
                   <div className="input-container">
-                    <div className="longbutton text-center" onClick={this.RegisterUser}>REGISTER</div>
+                    <div className="longbutton text-center" onClick={RegisterUser}>REGISTER</div>
                   </div>
                </div>
               </div>
              </div>
             </div>
         )
-    }
 }
 
 export default Register

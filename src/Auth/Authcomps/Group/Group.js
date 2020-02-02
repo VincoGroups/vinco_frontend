@@ -645,22 +645,6 @@ const [subgroups , setSubGroups] = useState({
                     }}>CONNECTIONS</p>
                  </div>
                  <div className="group-main-component">
-                   <p className="main-group-nav" onClick={() => {
-                        setBoxFiler({
-                          boxfiler: false
-                        })
-                        setWallPost({
-                          wallpost: false
-                        })
-                        setGroupConnectivity({
-                          groupconnectivity: false
-                        })
-                        setSubComp({
-                          subcomp: false
-                        })
-                    }}>MAINCHAT</p>
-                 </div>
-                 <div className="group-main-component">
                  <SubGroupNav subgroups={subgroups.subgroups}/>
                  </div>
                  <div className="group-main-component">

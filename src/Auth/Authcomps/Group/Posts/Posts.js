@@ -371,7 +371,7 @@ const Posts = ({visible, grouptype, groupid, wallpostid }) => {
                setReminderForm({
                    reminderform: true
                })
-             }}>CREATE A POST</button>
+             }}>CREATE A REMINDER</button>
             <ReminderForm reminderform={reminderform.reminderform}/>
             </div>
             </div>
