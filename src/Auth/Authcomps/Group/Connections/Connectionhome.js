@@ -99,7 +99,7 @@ const ConnectionsHome = ({connectionhome , groupclientid, groupname, groupid}) =
         useEffect(() => {
          subComponent.current = true
          if (subComponent.current) {
-            axios.get('/connection/getpendingconnections/' + groupid)
+            axios.get('https://vincobackend.herokuapp.com/connection/getpendingconnections/' + groupid)
             .then((body) => {
                 setPendingGroups({
                     pendingGroups: body.data

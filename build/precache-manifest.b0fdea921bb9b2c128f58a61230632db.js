@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "07db95fb3460370b80573220e95ae517",
+    "revision": "3261f87819e2e1ce46ebc51afd261663",
     "url": "/vinco_frontend/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/vinco_frontend/static/css/2.ad9234db.chunk.css"
   },
   {
-    "revision": "862fb27ce9da66d2e5e2",
+    "revision": "3cf42bddaa623db79c0a",
     "url": "/vinco_frontend/static/css/main.29ee13b1.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/vinco_frontend/static/js/2.5979aa58.chunk.js"
   },
   {
-    "revision": "862fb27ce9da66d2e5e2",
-    "url": "/vinco_frontend/static/js/main.f9beda20.chunk.js"
+    "revision": "3cf42bddaa623db79c0a",
+    "url": "/vinco_frontend/static/js/main.7fa3af98.chunk.js"
   },
   {
     "revision": "b395d43e31856361eca6",

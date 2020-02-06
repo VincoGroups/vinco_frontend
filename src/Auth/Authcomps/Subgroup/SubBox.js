@@ -2,7 +2,7 @@ import React from 'react';
 import firebase from '../../../ServerSide/basefile';
 import {generateId} from '../../../ServerSide/functions';
 import FileView from '../../Authcomps/Group/BoxFiler/Fileview';
-
+import axios from 'axios';
 class SubBoxComments extends React.Component {
     constructor(props) {
         super(props);
@@ -14,12 +14,10 @@ class SubBoxComments extends React.Component {
 
     fetchCommentsOnFile = () => {
         setTimeout(() => {
-            fetch('/api/subgroup/getcommentsonfile/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid + '/' + this.props.currentfolderid + '/' + this.props.currentfileid)
-            .then((res) => {
-                return res.json();
-            }).then((bod) => {
+            axios.get('https://vincobackend.herokuapp.com/api/subgroup/getcommentsonfile/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid + '/' + this.props.currentfolderid + '/' + this.props.currentfileid)
+            .then((bod) => {
                 this.setState({
-                    commentres: bod
+                    commentres: bod.data
                 })
             }).catch((error) => {
                 console.log(error);
@@ -40,13 +38,11 @@ class SubBoxComments extends React.Component {
             commentid: generateId(54)
         }
 
-        fetch('/api/subgroup/commentonfile/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid + '/' + this.props.currentfolderid + '/' + this.props.currentfileid, {
-            method: 'PUT',
+        axios.post('/api/subgroup/commentonfile/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid + '/' + this.props.currentfolderid + '/' + this.props.currentfileid, data,{
             headers : {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
         }).then(() => {
             this.fetchCommentsOnFile();
         }).catch((error) => {
@@ -107,12 +103,10 @@ class SubBox extends React.Component {
 
     fetchFolders = () => {
         setTimeout(() => {
-            fetch('/api/subgroup/getsubfolders/'  + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid )
-            .then((res) => {
-                return res.json();
-            }).then((bod) => {
+            axios.get('https://vincobackend.herokuapp.com/api/subgroup/getsubfolders/'  + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid )
+            .then((bod) => {
                 this.setState({
-                    subboxres: bod
+                    subboxres: bod.data
                 })
             }).catch((error) => {
                 console.log(error);
@@ -158,13 +152,11 @@ class SubBox extends React.Component {
                                   filedata: filedata
                               }
                               
-                              fetch('/api/subgroup/addfilessubfolder/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid + '/' + data.folderid, {
-                                  method: 'PUT',
+                              axios.put('https://vincobackend.herokuapp.com/api/subgroup/addfilessubfolder/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid + '/' + data.folderid, data,{
                                   headers: {
                                     'Accept': 'application/json',
                                     'Content-Type': 'application/json'
                                   },
-                                  body: JSON.stringify(data)
                               }).then(() => {
                                       for(let j = 0; j < files.length; j++) {
                                         firebase.storage().ref(this.props.groupid  + '/' + this.props.subid + '/' + this.props.subgroupid  + '/' + this.props.subboxid + '/' + data.folderid + '/' + files[j].name)
@@ -213,13 +205,11 @@ class SubBox extends React.Component {
                                       filedata: filedata
                                   }
                                   
-                                  fetch('/api/subgroup/addfilessubfolder/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid + '/' + data.folderid, {
-                                      method: 'PUT',
+                                  axios.put('https://vincobackend.herokuapp.com/api/subgroup/addfilessubfolder/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid + '/' + data.folderid, data,{
                                       headers: {
                                         'Accept': 'application/json',
                                         'Content-Type': 'application/json'
                                       },
-                                      body: JSON.stringify(data)
                                   }).then(() => {
                                           for(let j = 0; j < files.length; j++) {
                                             firebase.storage().ref(this.props.groupid  + '/' + this.props.subid + '/' + this.props.subgroupid  + '/' + this.props.subboxid + '/' + data.folderid + '/' + files[j].name)
@@ -412,13 +402,11 @@ class SubBox extends React.Component {
                                       filedata: filedata
                                   }
                                   
-                                  fetch('/api/subgroup/createsubfolder/'  + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid, {
-                                      method: 'PUT',
+                                  axios.put('https://vincobackend.herokuapp.com/api/subgroup/createsubfolder/'  + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid, data,{
                                       headers: {
                                         'Accept': 'application/json',
                                         'Content-Type': 'application/json'
                                       },
-                                      body: JSON.stringify(data)
                                   }).then(() => {
                                         for (let j = 0; j < files.length; j++) {
                                             firebase.storage().ref(this.props.groupid  + '/' + this.props.subid + '/' + this.props.subgroupid  + '/' + this.props.subboxid + '/' + data.folderid + '/' + files[j].name)
@@ -465,13 +453,11 @@ class SubBox extends React.Component {
                                       filedata: filedata
                                   }
                                   
-                                  fetch('/api/subgroup/createsubfolder/'  + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid, {
-                                      method: 'PUT',
+                                  axios.put('https://vincobackend.herokuapp.com/api/subgroup/createsubfolder/'  + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subboxid, data,{
                                       headers: {
                                         'Accept': 'application/json',
                                         'Content-Type': 'application/json'
                                       },
-                                      body: JSON.stringify(data)
                                   }).then(() => {
                                         for (let j = 0; j < files.length; j++) {
                                             firebase.storage().ref(this.props.groupid  + '/' + this.props.subid + '/' + this.props.subgroupid  + '/' + this.props.subboxid + '/' + data.folderid + '/' + files[j].name)

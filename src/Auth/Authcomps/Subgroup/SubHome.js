@@ -2,7 +2,7 @@ import React from 'react';
 import Authnav from '../Authnav';
 import SubPostShow from './Subposts'
 import SubShowBox from './SubBox'
-
+import axios from 'axios';
 class SubHome extends React.Component {
     constructor(props) {
         super(props);
@@ -18,12 +18,10 @@ class SubHome extends React.Component {
       const {subapi} = this.props.match.params;
       const {grouptype} = this.props.match.params;
 
-    await fetch('/api/subgroup/getcreds/' + grouptype + '/' + mainapi + '/' + subapi)
-      .then((res) => {
-          return res.json();
-      }).then((body) => {
+    await axios.get('https://vincobackend.herokuapp.com/api/subgroup/getcreds/' + grouptype + '/' + mainapi + '/' + subapi)
+      .then((body) => {
           this.setState({
-              subres: body
+              subres: body.data
           })
       }).catch((error) => {
           console.log(error)

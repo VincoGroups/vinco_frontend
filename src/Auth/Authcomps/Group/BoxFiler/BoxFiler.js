@@ -193,7 +193,7 @@ const FileNotes = ({filenotes, url , type ,grouptype , groupid, boxfilerid , cur
 
                                 console.log(data);
                                 
-                                axios.post('/api/boxfiler/postnotes/' + grouptype + '/' + groupid + '/' + boxfilerid + '/' + currentfolderid + '/' + currentfileid, data,{
+                                axios.post('https://vincobackend.herokuapp.com/api/boxfiler/postnotes/' + grouptype + '/' + groupid + '/' + boxfilerid + '/' + currentfolderid + '/' + currentfileid, data,{
                                     headers: {
                                         'Accept': 'application/json',
                                         'Content-Type': 'application/json'
@@ -814,7 +814,7 @@ const BoxFiler = ({boxfiler , grouptype ,groupid, boxfilerid}) => {
                                       filedata: filedata
                                   }
                                   
-                                  axios.post('/api/boxfiler/createfolder/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + data.folderid, data,{
+                                  axios.post('https://vincobackend.herokuapp.com/api/boxfiler/createfolder/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + data.folderid, data,{
                                       headers: {
                                         'Accept': 'application/json',
                                         'Content-Type': 'application/json'
@@ -870,7 +870,7 @@ const BoxFiler = ({boxfiler , grouptype ,groupid, boxfilerid}) => {
                                           filedata: filedata
                                       }
                                       
-                                      axios.post('/api/boxfiler/createfolder/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + data.folderid, data,{
+                                      axios.post('https://vincobackend.herokuapp.com/api/boxfiler/createfolder/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + data.folderid, data,{
                                           headers: {
                                             'Accept': 'application/json',
                                             'Content-Type': 'application/json'

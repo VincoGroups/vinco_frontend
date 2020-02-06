@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/vinco_frontend/precache-manifest.8c8ed45504c6d19e7e59fa9ea7e8863a.js"
+  "/vinco_frontend/precache-manifest.b0fdea921bb9b2c128f58a61230632db.js"
 );
 
 self.addEventListener('message', (event) => {

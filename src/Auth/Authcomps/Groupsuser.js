@@ -13,7 +13,7 @@ class Groupuser extends React.Component{
     }
 
    async componentDidMount() {
-       await axios.get('/api/group/getgroups/' + firebase.auth().currentUser.uid) 
+       await axios.get('https://vincobackend.herokuapp.com/api/group/getgroups/' + firebase.auth().currentUser.uid) 
        .then((bod) => {
            this.setState({
                res: bod.data

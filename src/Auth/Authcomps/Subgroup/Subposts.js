@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from '../../../ServerSide/basefile';
 import {generateId} from '../../../ServerSide/functions';
-
+import axios from 'axios'
 class SubPostsComments extends React.Component {
     constructor(props) {
         super(props);
@@ -14,12 +14,10 @@ class SubPostsComments extends React.Component {
 
     fetchComments = () => {
         setTimeout(() => {
-          fetch('/api/subgroup/getpostcomments/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subpostid + '/' + this.props.postid )
-          .then((res) => {
-              return res.json();
-          }).then((body) => {
+          axios.get('https://vincobackend.herokuapp.com/api/subgroup/getpostcomments/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subpostid + '/' + this.props.postid )
+          .then((body) => {
               this.setState({
-                  commentsres: body
+                  commentsres: body.data
               })
           }).catch((error) => {
               console.log(error);
@@ -66,13 +64,11 @@ class SubPostsComments extends React.Component {
             creator: firebase.auth().currentUser.uid
         }
 
-        fetch('/api/subgroup/postcommentonpost/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subpostid + '/' + this.props.postid,{
-            method: 'PUT',
+        axios.put('https://vincobackend.herokuapp.com/api/subgroup/postcommentonpost/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subpostid + '/' + this.props.postid, data,{
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
         }).then(() => {
             this.fetchComments();
         }).catch((error) => {
@@ -132,12 +128,10 @@ class Subposts extends React.Component {
 
     fetchSubPosts = () => {
       setTimeout(() => {
-          fetch('/api/subgroup/getsubposts/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subpostid)
-          .then((res) => {
-              return res.json();
-          }).then((bod) => {
+          axios.get('https://vincobackend.herokuapp.com/api/subgroup/getsubposts/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subpostid)
+          .then((bod) => {
               this.setState({
-                  subpostres: bod
+                  subpostres: bod.data
               })
           }).catch((error) => {
               console.log(error);
@@ -148,12 +142,10 @@ class Subposts extends React.Component {
     componentDidMount() {
       this.fetchSubPosts();
       setTimeout(() => {
-        fetch('/api/boxfiler/getfolders/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.groupboxfilerid)
-        .then((res) => {
-            return res.json();
-        }).then((bod) => {
+        axios.get('https://vincobackend.herokuapp.com/api/boxfiler/getfolders/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.groupboxfilerid)
+        .then((bod) => {
             this.setState({
-                mainboxres: bod
+                mainboxres: bod.data
             })
         }).catch((error) => {
             console.log(error);
@@ -294,13 +286,11 @@ class Subposts extends React.Component {
                                 }
 
                                 
-                                fetch('/api/subgroup/makepost/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subpostid, {
-                                method: 'PUT',
+                                axios.put('https://vincobackend.herokuapp.com/api/subgroup/makepost/' + this.props.grouptype + '/' + this.props.groupid + '/' + this.props.subid + '/' + this.props.subgroupid + '/' + this.props.subpostid, data,{
                                 headers: {
                                     'Accept': 'application/json',
                                     'Content-Type': 'application/json'
                                 },
-                                body: JSON.stringify(data)
                                 }).then(() => {
                                  this.fetchSubPosts();
                                  this.setState({

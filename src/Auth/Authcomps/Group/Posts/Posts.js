@@ -152,7 +152,7 @@ const Posts = ({visible, grouptype, groupid, wallpostid }) => {
                                          date: new Date()
                                      }
                              
-                                     axios.post('/wallpostapi/comment/' + grouptype + '/' + groupid + '/' + wallpostid + '/' + post.postid , commentdata,{
+                                     axios.post('https://vincobackend.herokuapp.com/wallpostapi/comment/' + grouptype + '/' + groupid + '/' + wallpostid + '/' + post.postid , commentdata,{
                                          headers: {
                                          'Accept': 'application/json',
                                          'Content-Type': 'application/json'
@@ -496,7 +496,7 @@ const Posts = ({visible, grouptype, groupid, wallpostid }) => {
                                             displaydate: date.getMonth().toString() + '/' + date.getDate() + '/' + date.getFullYear(),
                                         }
                                 
-                                        axios.post('/wallpostapi/makepost/'+ grouptype + '/' + groupid + '/' + wallpostid, data,{
+                                        axios.post('https://vincobackend.herokuapp.com/wallpostapi/makepost/'+ grouptype + '/' + groupid + '/' + wallpostid, data,{
                                             headers: {
                                                 'Accept': 'application/json',
                                                 'Content-Type': 'application/json'
