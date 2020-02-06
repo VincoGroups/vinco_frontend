@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.css": "/vinco_frontend/static/css/main.29ee13b1.chunk.css",
+    "main.js": "/vinco_frontend/static/js/main.f9beda20.chunk.js",
+    "main.js.map": "/vinco_frontend/static/js/main.f9beda20.chunk.js.map",
+    "runtime~main.js": "/vinco_frontend/static/js/runtime~main.9fb65296.js",
+    "runtime~main.js.map": "/vinco_frontend/static/js/runtime~main.9fb65296.js.map",
+    "static/css/2.ad9234db.chunk.css": "/vinco_frontend/static/css/2.ad9234db.chunk.css",
+    "static/js/2.5979aa58.chunk.js": "/vinco_frontend/static/js/2.5979aa58.chunk.js",
+    "static/js/2.5979aa58.chunk.js.map": "/vinco_frontend/static/js/2.5979aa58.chunk.js.map",
+    "index.html": "/vinco_frontend/index.html",
+    "precache-manifest.8c8ed45504c6d19e7e59fa9ea7e8863a.js": "/vinco_frontend/precache-manifest.8c8ed45504c6d19e7e59fa9ea7e8863a.js",
+    "service-worker.js": "/vinco_frontend/service-worker.js",
+    "static/css/2.ad9234db.chunk.css.map": "/vinco_frontend/static/css/2.ad9234db.chunk.css.map",
+    "static/css/main.29ee13b1.chunk.css.map": "/vinco_frontend/static/css/main.29ee13b1.chunk.css.map",
+    "static/media/font-awesome.min.css": "/vinco_frontend/static/media/fontawesome-webfont.fee66e71.woff"
+  }
+}

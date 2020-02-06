@@ -5,6 +5,7 @@ import firebase from '../ServerSide/basefile';
 import {generateId, MinimizeBigTitle} from '../ServerSide/functions';
 import LoadingWhite from '../Comps/Loadingwhite';
 import LoadingModalPage from '../Comps/WholeLoadingWhite';
+import axios from 'axios';
 
 const Dash = () => {
     const [connectionsres, setConnectionRes] = useState({
@@ -44,12 +45,10 @@ const Dash = () => {
         componentMounted.current = true
             setTimeout(() => {
                 if (componentMounted.current) {
-                fetch('/api/group/getgroups/' + firebase.auth().currentUser.uid)
-                .then((res) => {
-                    return res.json();
-                }).then((body) => {
+                axios.get('https://vincobackend.herokuapp.com/api/group/getgroups/' + firebase.auth().currentUser.uid)
+                .then((body) => {
                     setResponse({
-                        response: body
+                        response: body.data
                     })
                     setLoading({
                         loading: false
@@ -60,23 +59,19 @@ const Dash = () => {
                 }
                }, 500);
     
-               fetch('/user/getusersubs/' + firebase.auth().currentUser.uid)
-               .then((res) => {
-                   return res.json();
-               }).then((body) => {
+               axios.get('https://vincobackend.herokuapp.com/user/getusersubs/' + firebase.auth().currentUser.uid)
+               .then((body) => {
                    setSubRes({
-                       subres: body
+                       subres: body.data
                    })
                }).catch((error) => {
                    console.log(error);
-             }) 
+               }) 
 
-             fetch('/user/getuserconnections/' + firebase.auth().currentUser.uid)
-             .then((res) => {
-                 return res.json();
-             }).then((body) => {
+             axios.get('https://vincobackend.herokuapp.com/user/getuserconnections/' + firebase.auth().currentUser.uid)
+             .then((body) => {
                  setConnectionRes({
-                     connectionsres: body
+                     connectionsres: body.data
                  })
              }).catch((error) => {
                  console.log(error)
@@ -140,11 +135,9 @@ const Dash = () => {
           if (modalopened === true) {
                setTimeout(() => {
                 if (subComponentMounted.current) {
-                fetch('/user/getallusers')
-                .then((res) => {
-                  return res.json();
-                }).then((body) => {
-                  const newbody = body.filter(index => index.useruid !== firebase.auth().currentUser.uid)
+                axios.get('https://vincobackend.herokuapp.com/user/getallusers')
+                .then((body) => {
+                  const newbody = body.data.filter(index => index.useruid !== firebase.auth().currentUser.uid)
                   setAllusers({
                       allusers: newbody
                   })
@@ -312,17 +305,13 @@ const Dash = () => {
                                         }
 
                                        
-                                        fetch('/api/group/creategroup' , {
-                                            method: 'POST',
+                                        axios.post('https://vincobackend.herokuapp.com/api/group/creategroup' , data, {
                                             headers: {
                                                 'Accept': 'application/json',
                                                 'Content-Type': 'application/json'
                                             },
-                                            body: JSON.stringify(data)
-                                        }).then((res) => {
-                                            return res.json();
                                         }).then((body) => {
-                                            response.response.push(body);
+                                            response.response.push(body.data);
                                             setTimeout(() => {
                                                 setResponse({
                                                     response: response.response

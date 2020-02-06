@@ -6,8 +6,7 @@ import firebase from '../../../ServerSide/basefile';
 import FilterUsers from '../../../ServerSide/Filters/FilterUsersAdd';
 import Subgroup from './Subgroups/Subgrouphome';
 import Posts from './Posts/Posts';
-//import MainChatShow from './Mainchat/Mainchat';
-
+import axios from 'axios';
 const Group = (props) => {
  const [groupres, setGroupRes] = useState({
     groupres: []
@@ -49,17 +48,13 @@ const [subgroups , setSubGroups] = useState({
       const {groupapi} = props.match.params;
         setTimeout(() => {
         if (componentMounted.current) {
-          fetch('/api/group/checkusergroup/' + groupapi + '/' + firebase.auth().currentUser.uid)
-         .then((res) => {
-           return res.json();
-         }).then((bod) => {
-           if (bod.userresponse === true) {
-             fetch('/api/group/getgroupdetails/' + groupapi + '/' + firebase.auth().currentUser.uid)
-             .then((res) => {
-                 return res.json();
-             }).then((bod) => {
+          axios.get('https://vincobackend.herokuapp.com/api/group/checkusergroup/' + groupapi + '/' + firebase.auth().currentUser.uid)
+         .then((bod) => {
+           if (bod.data.userresponse === true) {
+             axios.get('https://vincobackend.herokuapp.com/api/group/getgroupdetails/' + groupapi + '/' + firebase.auth().currentUser.uid)
+             .then((bod) => {
                  setGroupRes({
-                     groupres: bod
+                     groupres: bod.data
                  })
              }).then(() => {
                if (groupres.groupres.grouptype === "ORGANIZATIONALGROUPS") {
@@ -74,7 +69,7 @@ const [subgroups , setSubGroups] = useState({
              }).catch((error) => {
                  console.log(error)
              })
-           } else if (bod.userresponse === false) {
+           } else if (bod.data.userresponse === false) {
              props.history.push('/dash');
            }
           }).catch((error) => {
@@ -82,12 +77,10 @@ const [subgroups , setSubGroups] = useState({
           })
   
 
-          fetch('/api/group/getusers/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid)
-          .then((res) => {
-            return res.json();
-          }).then((bod) => {
+          axios.get('https://vincobackend.herokuapp.com/api/group/getusers/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid)
+          .then((bod) => {
             setUsersDetails({
-              userdetails: bod
+              userdetails: bod.data
             })
           }).catch((error) => {
             console.log(error);
@@ -155,23 +148,19 @@ const [subgroups , setSubGroups] = useState({
         setTimeout(() => {
           if (componentMounted.current) {
             if (adminportal !== true) {
-              fetch('/api/group/getportalusers/' + groupres.groupres.groupid)
-              .then((res) => {
-                return res.json();
-              }).then((bod) => {
+              axios.get('https://vincobackend.herokuapp.com/api/group/getportalusers/' + groupres.groupres.groupid)
+              .then((bod) => {
                 setNonAdminUsers({
-                  nonadminusers: bod
+                  nonadminusers: bod.data
                 })
               }).catch((error) => {
                 console.log(error);
               })
     
-              fetch('/api/group/getusers/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid)
-              .then((res) => {
-                return res.json()
-              }).then((body) => {
+              axios.get('https://vincobackend.herokuapp.com/api/group/getusers/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid)
+              .then((body) => {
                 setTitleAdminUsers({
-                  titleadminusers: body
+                  titleadminusers: body.data
                 })
               }).catch((error) => {
                 console.log(error);
@@ -200,13 +189,13 @@ const [subgroups , setSubGroups] = useState({
                               <div className="row">
                                 <div className="col-md-6">
                                   <button className="button-submit" onClick={() => {
-                                    fetch('/api/group/makeadmin/' + groupres.groupres.groupid + '/' + item.useruid, {
+                                    axios.post('https://vincobackend.herokuapp.com/api/group/makeadmin/' + groupres.groupres.groupid + '/' + item.useruid, {
                                       method: 'POST'
                                     })
                                     .then((body) => {
                                       console.log('user has been made admin')
                                       setNonAdminUsers({
-                                        nonadminusers: body
+                                        nonadminusers: body.data
                                       })
                                     }).catch((error) => {
                                       console.log(error);
@@ -215,16 +204,13 @@ const [subgroups , setSubGroups] = useState({
                                 </div>
                                 <div className="col-md-6">
                                   <button className="button-red" onClick={() => {
-                                    fetch('/api/group/removeuser/' + groupres.groupres.groupid + '/' + item.useruid, {
-                                      method: 'DELETE'
-                                    }).then(() => {
-                                      fetch('/api/group/getportalusers/' + groupres.groupres.groupid)
-                                      .then((res) => {
-                                        return res.json();
-                                      }).then((bod) => {
+                                    axios.delete('https://vincobackend.herokuapp.com/api/group/removeuser/' + groupres.groupres.groupid + '/' + item.useruid)
+                                    .then(() => {
+                                      axios.get('https://vincobackend.herokuapp.com/api/group/getportalusers/' + groupres.groupres.groupid)
+                                      .then((bod) => {
                                         console.log(bod);
                                         setNonAdminUsers({
-                                          nonadminusers: bod
+                                          nonadminusers: bod.data
                                         })
                                       }).catch((error) => {
                                         console.log(error);
@@ -273,16 +259,12 @@ const [subgroups , setSubGroups] = useState({
                           <div className="input-container">
                            <input type="text" className="input-regular-white" placeholder="Give the user title" onKeyDown={(e) => {
                             if (e.keyCode === 13) {
-                              fetch('/api/group/giveusertitle/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid  + '/' + item.useruid , {
-                                method: 'PUT',
-                                body: e.target.value
-                              }).then(() => {
-                                fetch('/api/group/getusers/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid)
-                                .then((res) => {
-                                  return res.json()
-                                }).then((body) => {
+                              axios.put('https://vincobackend.herokuapp.com/api/group/giveusertitle/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid  + '/' + item.useruid , e.target.value)
+                              .then(() => {
+                                axios.get('https://vincobackend.herokuapp.com/api/group/getusers/' + groupres.groupres.grouptype + '/' + groupres.groupres.groupid)
+                                .then((body) => {
                                   setTitleAdminUsers({
-                                    titleadminusers: body
+                                    titleadminusers: body.data
                                   })
                                 }).catch((error) => {
                                   console.log(error);
@@ -426,8 +408,7 @@ const [subgroups , setSubGroups] = useState({
                 <div className="float-right">
                   <div className={show.show}>
                   <button className="button-white-red" onClick={() => {
-                    fetch('/api/group/leavegroup/' + groupres.groupres.groupapi + '/' + groupres.groupres.groupid + '/' + firebase.auth().currentUser.uid , {
-                      method: 'DELETE',
+                    axios.delete('https://vincobackend.herokuapp.com/api/group/leavegroup/' + groupres.groupres.groupapi + '/' + groupres.groupres.groupid + '/' + firebase.auth().currentUser.uid , {
                       headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
@@ -462,11 +443,9 @@ const [subgroups , setSubGroups] = useState({
       if (groupdetails === true) {
         if (subComp.current) {
           if (groupres.groupres.grouptype !== undefined){
-            fetch('/api/group/checkuseradmin/'+ groupres.groupres.groupid + '/' + firebase.auth().currentUser.uid)
-            .then((res) => {
-              return res.json();
-            }).then((bod) => {
-              if (bod === true) {
+            axios.get('https://vincobackend.herokuapp.com/api/group/checkuseradmin/'+ groupres.groupres.groupid + '/' + firebase.auth().currentUser.uid)
+            .then((bod) => {
+              if (bod.data === true) {
                 setAdminUser({
                   adminuser: true
                 })

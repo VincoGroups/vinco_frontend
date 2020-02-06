@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Authnav from './Authcomps/Authnav';
 import firebase from '../ServerSide/basefile';
-
+import axios from 'axios';
 const Search = () => {
    const [clientid, setClientId] = useState({
        clientid: ''
@@ -21,12 +21,10 @@ const Search = () => {
    useEffect(() => {
     componentMounted.current = true
     if (componentMounted.current) {
-        fetch('/api/group/getclients/' + firebase.auth().currentUser.uid)
-    .then((res) => {
-        return res.json()
-    }).then((bod) => {
+    axios.get('https://vincobackend.herokuapp.com/api/group/getclients/' + firebase.auth().currentUser.uid)
+    .then((bod) => {
         setUserResponse({
-            userresponse: bod
+            userresponse: bod.data
         })
     }).catch((error) => {
         console.log(error);
@@ -41,8 +39,7 @@ const Search = () => {
             return (
                 <div>
                   <button onClick={() => {
-                      fetch('/api/group/putrequest/' + response.response.groupid + '/' + firebase.auth().currentUser.uid, {
-                          method: 'PUT',
+                      axios.put('https://vincobackend.herokuapp.com/api/group/putrequest/' + response.response.groupid + '/' + firebase.auth().currentUser.uid, {
                           headers:{
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
@@ -119,12 +116,10 @@ const Search = () => {
                   </div>
                  </div>
                  <div className="longbutton text-center" onClick={() => {
-                     fetch('/api/group/getclientgroup/' + clientid.clientid)
-                     .then((res) => {
-                         return res.json();
-                     }).then((body) => {
+                     axios.get('https://vincobackend.herokuapp.com/api/group/getclientgroup/' + clientid.clientid)
+                     .then((body) => {
                          setResponse({
-                            response: body
+                            response: body.data
                          })
                          setClientGroupModal({
                              clientgroupmodal: true

@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.19.2",
     "bootstrap": "^4.3.1",
     "email-validator": "^2.0.4",
     "eslint-utils": "^1.4.1",
     "firebase": "^6.6.0",
     "font-awesome": "^4.7.0",
+    "gh-pages": "^2.2.0",
     "pdfjs": "^2.3.1",
     "react": "^16.9.0",
     "react-autosuggest": "^9.4.3",
@@ -18,10 +20,12 @@
     "simple-crypto-js": "^2.2.0",
     "sockjs-client": "^1.4.0",
     "stompjs": "^2.3.3",
-    "webpack": "^4.41.0"
+    "webpack": "4.41.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -d build",
+    "start": "HTTPS=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -41,5 +45,6 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8080"
+  "proxy": "https://vincobackend.herokuapp.com/",
+  "homepage": "https://jaffersyed0206.github.io/vinco_frontend/"
 }

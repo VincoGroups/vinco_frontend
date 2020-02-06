@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import './App.css';
-import {BrowserRouter , Route} from 'react-router-dom';
+import {HashRouter , Route} from 'react-router-dom';
 import Home from './NonAuth/Home';
 import Login from './NonAuth/Login';
 import firebase from './ServerSide/basefile';
@@ -41,7 +41,7 @@ const App = () => {
 
   return (
     <div>
-      <BrowserRouter>
+      <HashRouter basename="/">
         <Route path="/" component={Home} exact/>
         <Route path="/Login" component={Login} exact/>
         <Route path="/Register" component={Register} exact/>
@@ -51,7 +51,7 @@ const App = () => {
         <PrivateRoute path="/pending" component={Pendinggroups} isAuthenticated={auth.auth} exact/>
         <PrivateRoute path="/subgroup/:grouptype/:mainapi/:subapi" component={SubHome} isAuthenticated={auth.auth} exact/>
         <PrivateRoute path="/connection/:connectionapi" component={ConnectionPage} isAuthenticated={auth.auth} exact/>
-      </BrowserRouter>
+      </HashRouter>
     </div>
   );
 }

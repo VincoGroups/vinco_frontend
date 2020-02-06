@@ -2,7 +2,7 @@ import React, {useState , useEffect} from 'react';
 import Useraccount from './Useraccount';
 import {NavLink} from 'react-router-dom';
 import firebase from '../../ServerSide/basefile'
-
+import axios from 'axios';
 const Authnav = () => {
 
   const [remindermodal , setReminder] = useState({
@@ -22,12 +22,10 @@ const Authnav = () => {
   })
 
   useEffect(() => {
-    fetch('/api/reminders/fetchreminders/' + firebase.auth().currentUser.uid)
-    .then((res) => {
-      return res.json();
-    }).then((body) => {
+    axios.get('https://vincobackend.herokuapp.com/api/reminders/fetchreminders/' + firebase.auth().currentUser.uid)
+    .then((body) => {
       setReminders({
-        reminders: body
+        reminders: body.data
       })
     }).catch((errors) => {
       console.log(errors);

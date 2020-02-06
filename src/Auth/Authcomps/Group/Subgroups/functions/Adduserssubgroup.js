@@ -1,6 +1,7 @@
 import React from 'react';
 import firebase from '../../../../../ServerSide/basefile';
 import {generateId} from '../../../../../ServerSide/functions';
+import axios from 'axios';
 class Adduserssubgroup extends React.Component{
 
   constructor(props) {
@@ -13,18 +14,14 @@ class Adduserssubgroup extends React.Component{
 
   componentDidMount() {
     setTimeout(() => {
-      fetch('/api/group/getgroupusers/' + this.props.groupid )
-      .then((res) => {
-        return res.json();
-      }).then((body) => {
-        const newbody = body.users.filter(index => index !== firebase.auth().currentUser.uid)
+      axios.get('https://vincobackend.herokuapp.com/api/group/getgroupusers/' + this.props.groupid )
+      .then((body) => {
+        const newbody = body.data.users.filter(index => index !== firebase.auth().currentUser.uid)
         const bodyarray = []
         newbody.forEach((item) => {
-          fetch('/api/group/getusers/' + item)
+          axios.get('https://vincobackend.herokuapp.com/api/group/getusers/' + item)
             .then((response) => {
-                response.json().then((responsebody) => {
-                  bodyarray.push(responsebody);
-                })
+               bodyarray.push(response.data);
             }).catch((error) => {
               console.log(error)
             })

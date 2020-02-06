@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Authnav from '../Auth/Authcomps/Authnav';
 import firebase from '../ServerSide/basefile';
+import axios from 'axios';
 
 const Pendinggroups = (props) =>{
     const [res, setRes] = useState({
@@ -18,12 +19,10 @@ const Pendinggroups = (props) =>{
     useEffect(() => {
     componentMounted.current = true
       if (componentMounted.current) {
-        fetch('/api/group/pendinggroups/' + firebase.auth().currentUser.uid)
-        .then((response) => {
-            return response.json();
-        }).then((bod) => {
+        axios.get('https://vincobackend.herokuapp.com/api/group/pendinggroups/' + firebase.auth().currentUser.uid)
+        .then((bod) => {
             setRes({
-                res: bod
+                res: bod.data
             })
         }).catch((error) => {
             console.log(error);
@@ -83,10 +82,8 @@ const Pendinggroups = (props) =>{
                             <h4 className="text-center">{item.groupname}</h4>
                             <div className="button-padding">
                             <button className="button-submit-lightblue" onClick={() => {
-                                        fetch('/api/group/addtogroup/' + item.clientid + '/' + firebase.auth().currentUser.uid)
-                                        .then((res) => {
-                                            return res.json()
-                                        }).then(() => {
+                                        axios.get('https://vincobackend.herokuapp.com/api/group/addtogroup/' + item.clientid + '/' + firebase.auth().currentUser.uid)
+                                        .then(() => {
                                             props.history.push('/dash');
                                         }).catch((error) => {
                                             console.log(error)

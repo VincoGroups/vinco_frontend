@@ -3,6 +3,7 @@ import {generateId} from '../../../../ServerSide/functions';
 import firebase from '../../../../ServerSide/basefile';
 import LoadingBlue from '../../../../Comps/Loadingblue';
 import FileViewer from './Fileview';
+import axios from 'axios';
 const FileNotes = ({filenotes, url , type ,grouptype , groupid, boxfilerid , currentfolderid, currentfileid , currentfilename}) => {
     const [notesres, setNotesRes] = useState({
         notesres: []
@@ -34,13 +35,11 @@ const FileNotes = ({filenotes, url , type ,grouptype , groupid, boxfilerid , cur
     const fetchFileNotes = useCallback(() => {
        setTimeout(() => {
         if (componentMounted.current) {
-            fetch('/api/boxfiler/getnotes/' + grouptype + '/' + groupid + '/' + boxfilerid + '/' + currentfolderid + '/' + currentfileid)
-             .then((res) => {
-                 return res.json();
-             }).then((body) => {
+            axios.get('https://vincobackend.herokuapp.com/api/boxfiler/getnotes/' + grouptype + '/' + groupid + '/' + boxfilerid + '/' + currentfolderid + '/' + currentfileid)
+             .then((body) => {
                  console.log(body);
                  setNotesRes({
-                     notesres: body
+                     notesres: body.data
                  })
              }).catch((error) => {
                  console.log(error)
@@ -194,17 +193,13 @@ const FileNotes = ({filenotes, url , type ,grouptype , groupid, boxfilerid , cur
 
                                 console.log(data);
                                 
-                                fetch('/api/boxfiler/postnotes/' + grouptype + '/' + groupid + '/' + boxfilerid + '/' + currentfolderid + '/' + currentfileid, {
-                                    method: 'POST',
+                                axios.post('/api/boxfiler/postnotes/' + grouptype + '/' + groupid + '/' + boxfilerid + '/' + currentfolderid + '/' + currentfileid, data,{
                                     headers: {
                                         'Accept': 'application/json',
                                         'Content-Type': 'application/json'
                                     },
-                                    body: JSON.stringify(data)
-                                }).then((res) => {
-                                    return res.json();
                                 }).then((body) => {
-                                    notesres.notesres.push(body);
+                                    notesres.notesres.push(body.data);
                                     setNotesRes({
                                         notesres: notesres.notesres
                                     })
@@ -294,13 +289,11 @@ const FileComments = ({ filecomment, url , type ,grouptype , groupid, boxfilerid
     const fetchFileComments = useCallback(() => {
         setTimeout(() => {
           if (componentMounted.current) {
-            fetch('/api/boxfiler/getfilecomments/' + grouptype + '/' + groupid + '/' + boxfilerid + '/' + currentfolderid + '/' + currentfileid)
-            .then((res) => {
-                return res.json();
-            }).then((bod) => {
+            axios.get('https://vincobackend.herokuapp.com/api/boxfiler/getfilecomments/' + grouptype + '/' + groupid + '/' + boxfilerid + '/' + currentfolderid + '/' + currentfileid)
+            .then((bod) => {
                 console.log(bod);
                 setOutputFileRes({
-                   outputfileres: bod
+                   outputfileres: bod.data
                 })
                 setLoadingFile({
                     loading: false
@@ -341,13 +334,11 @@ const FileComments = ({ filecomment, url , type ,grouptype , groupid, boxfilerid
                 commentid: generateId(54)
             }
     
-            fetch('/api/boxfiler/commentonfile/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + currentfolderid + '/' + currentfileid , {
-                method: 'PUT',
+            axios.put('https://vincobackend.herokuapp.com/api/boxfiler/commentonfile/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + currentfolderid + '/' + currentfileid , outputdata,{
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(outputdata)
             }).then(() => {
              return fetchFileComments();
             }).catch((error) => {
@@ -446,12 +437,10 @@ const BoxFiler = ({boxfiler , grouptype ,groupid, boxfilerid}) => {
 
     const fetchFolders = useCallback(() => {
         setTimeout(() => {
-        fetch('/api/boxfiler/getfolders/' + grouptype + '/' + groupid + '/' + boxfilerid)
-        .then((res) => {
-            return res.json()
-        }).then((bod) => {
+        axios.get('https://vincobackend.herokuapp.com/api/boxfiler/getfolders/' + grouptype + '/' + groupid + '/' + boxfilerid)
+        .then((bod) => {
             setGroupRes({
-                groupresp: bod,
+                groupresp: bod.data,
             })
             setLoading({
                 loading: false
@@ -683,17 +672,13 @@ const BoxFiler = ({boxfiler , grouptype ,groupid, boxfilerid}) => {
                                   filedata: filedata
                               }
                               
-                              fetch('/api/boxfiler/addfiles/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + data.folderid, {
-                                  method: 'POST',
+                              axios.post('https://vincobackend.herokuapp.com/api/boxfiler/addfiles/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + data.folderid, data,{
                                   headers: {
                                     'Accept': 'application/json',
                                     'Content-Type': 'application/json'
                                   },
-                                  body: JSON.stringify(data)
-                              }).then((res) => {
-                                  return res.json();
                               }).then((body) => {
-                                  if(body.res === true) {
+                                  if(body.data.res === true) {
                                       for(let j = 0; j < files.length; j++) {
                                         firebase.storage().ref(groupid  + '/' + boxfilerid + '/' + data.folderid + '/' + files[j].name)
                                         .put(files[j]);
@@ -738,17 +723,13 @@ const BoxFiler = ({boxfiler , grouptype ,groupid, boxfilerid}) => {
                                       filedata: filedata
                                   }
                                   
-                                  fetch('/api/boxfiler/addfiles/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + data.folderid, {
-                                      method: 'POST',
+                                  axios.post('https://vincobackend.herokuapp.com/api/boxfiler/addfiles/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + data.folderid, data,{
                                       headers: {
                                         'Accept': 'application/json',
                                         'Content-Type': 'application/json'
                                       },
-                                      body: JSON.stringify(data)
-                                  }).then((res) => {
-                                      return res.json();
                                   }).then((body) => {
-                                      if(body.res === true) {
+                                      if(body.data.res === true) {
                                           for(let j = 0; j < files.length; j++) {
                                             firebase.storage().ref(groupid  + '/' + boxfilerid + '/' + data.folderid + '/' + files[j].name)
                                             .put(files[j]);
@@ -833,17 +814,13 @@ const BoxFiler = ({boxfiler , grouptype ,groupid, boxfilerid}) => {
                                       filedata: filedata
                                   }
                                   
-                                  fetch('/api/boxfiler/createfolder/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + data.folderid, {
-                                      method: 'POST',
+                                  axios.post('/api/boxfiler/createfolder/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + data.folderid, data,{
                                       headers: {
                                         'Accept': 'application/json',
                                         'Content-Type': 'application/json'
                                       },
-                                      body: JSON.stringify(data)
-                                  }).then((res) => {
-                                      return res.json();
                                   }).then((body) => {
-                                      if(body.res === true) {
+                                      if(body.data.res === true) {
                                           for(let j = 0; j < files.length; j++) {
                                             firebase.storage().ref(groupid  + '/' + boxfilerid + '/' + folderid + '/' + files[j].name)
                                             .put(files[j]);
@@ -893,17 +870,13 @@ const BoxFiler = ({boxfiler , grouptype ,groupid, boxfilerid}) => {
                                           filedata: filedata
                                       }
                                       
-                                      fetch('/api/boxfiler/createfolder/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + data.folderid, {
-                                          method: 'POST',
+                                      axios.post('/api/boxfiler/createfolder/'  + grouptype + '/' + groupid + '/' + boxfilerid + '/' + data.folderid, data,{
                                           headers: {
                                             'Accept': 'application/json',
                                             'Content-Type': 'application/json'
                                           },
-                                          body: JSON.stringify(data)
-                                      }).then((res) => {
-                                          return res.json();
                                       }).then((body) => {
-                                          if(body.res === true) {
+                                          if(body.data.res === true) {
                                             for (let j = 0; j < files.length; j++) {
                                                 firebase.storage().ref(groupid  + '/' + boxfilerid + '/' + data.folderid + '/' + files[j].name)
                                                 .put(files[j]);

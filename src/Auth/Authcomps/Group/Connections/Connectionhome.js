@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import LoadingBlue from '../../../../Comps/Loadingblue';
-
+import axios from 'axios'
 const ConnectionsHome = ({connectionhome , groupclientid, groupname, groupid}) => {
     const [pageload, setPageLoad] = useState({
         pageload: true
@@ -26,12 +26,10 @@ const ConnectionsHome = ({connectionhome , groupclientid, groupname, groupid}) =
     useEffect(() => {
      componentMounted.current = true;
      if (componentMounted.current) {
-        fetch('/connection/fetchconnections/' + groupid)
-        .then((res) => {
-            return res.json();
-        }).then((body) => {
+        axios.get('https://vincobackend.herokuapp.com/connection/fetchconnections/' + groupid)
+        .then((body) => {
             setConnectionsMade({
-                connectionsmade: body
+                connectionsmade: body.data
             })
             setPageLoad({
                 pageload: false
@@ -101,12 +99,10 @@ const ConnectionsHome = ({connectionhome , groupclientid, groupname, groupid}) =
         useEffect(() => {
          subComponent.current = true
          if (subComponent.current) {
-            fetch('/connection/getpendingconnections/' + groupid)
-            .then((res) => {
-                return res.json()
-            }).then((body) => {
+            axios.get('/connection/getpendingconnections/' + groupid)
+            .then((body) => {
                 setPendingGroups({
-                    pendingGroups: body
+                    pendingGroups: body.data
                 })
             }).catch((error) => {
                 console.log(error);
@@ -128,11 +124,9 @@ const ConnectionsHome = ({connectionhome , groupclientid, groupname, groupid}) =
                                <h4 className="text-center">{item.connectionname}</h4>
                                <div className="d-flex justify-content-center">
                                <button className="button-submit-white" onClick={() => {
-                                   fetch('/connection/createconnection/' + item.responseclientid + '/' + item.requestedclientid + '/' + item.pathconnectionid)
-                                   .then((res) => {
-                                    return res.json()
-                                  }).then((body) => {
-                                    connectionsmade.connectionsmade.push(body);
+                                   axios.get('https://vincobackend.herokuapp.com/connection/createconnection/' + item.responseclientid + '/' + item.requestedclientid + '/' + item.pathconnectionid)
+                                   .then((body) => {
+                                    connectionsmade.connectionsmade.push(body.data);
                                     setConnectionsMade({
                                         connectionsmade: connectionsmade.connectionsmade
                                     })
@@ -240,13 +234,11 @@ const ConnectionsHome = ({connectionhome , groupclientid, groupname, groupid}) =
   
                  
                   
-                  fetch('/connection/requestconnection/' + data.responseclientid + '/' + data.requestedclientid, {
-                    method: 'PUT',
+                  axios.put('https://vincobackend.herokuapp.com/connection/requestconnection/' + data.responseclientid + '/' + data.requestedclientid, data,{
                     headers: {
                       'Accept': 'application/json',
                       'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(data)
                   }).then(() => {
                     setConnectionResult({
                         connectionResults: false
@@ -350,10 +342,8 @@ const ConnectionsHome = ({connectionhome , groupclientid, groupname, groupid}) =
                                     <div className="button-padding">
                                     <button className="button-white" onClick={() => {
                                     if (connectioninput.connectioninput !== groupclientid) {
-                                        fetch('/connection/getgroup/' + connectioninput.connectioninput)
-                                        .then((res) => {
-                                        return res.json()
-                                        }).then((bod) => {
+                                        axios.get('https://vincobackend.herokuapp.com/connection/getgroup/' + connectioninput.connectioninput)
+                                        .then((bod) => {
                                             setFinalConnectionName({
                                                 finalconnectionname: connectionname.connectionname
                                             })
@@ -364,7 +354,7 @@ const ConnectionsHome = ({connectionhome , groupclientid, groupname, groupid}) =
                                                 connectionmodal: false
                                             })
                                             setRequestConnection({
-                                                requestconnection: bod
+                                                requestconnection: bod.data
                                             })
                                         }).catch((error) => {
                                         console.log(error)

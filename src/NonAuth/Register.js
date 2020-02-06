@@ -3,6 +3,7 @@ import Nav from './Comps/Nav';
 import firebase from '../ServerSide/basefile';
 import {Redirect} from 'react-router-dom';
 import validator from 'email-validator';
+import axios from 'axios'
 const Register = () => {
     const [firstname, setFirstName] = useState({
         firstname: ''
@@ -49,18 +50,14 @@ const Register = () => {
             email: email.email,
             password: password.password
         }
-        fetch('/user/createuser' , {
-            method: 'POST',
+        axios.post('https://vincobackend.herokuapp.com/user/createuser', JSON.stringify(data), {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        }).then((response) => {
-            return response.json();
-        }).then((body) => {
-            if(body === true) {
-                console.log(body);
+            }
+        })
+        .then((body) => {
+            if(body.data === true) {
                 firebase.auth().signInWithEmailAndPassword(email.email , password.password)
                 .then(() => {
                     setLoggedIn({

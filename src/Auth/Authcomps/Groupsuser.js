@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from '../../ServerSide/basefile';
 import {NavLink} from 'react-router-dom';
-
+import axios from 'axios';
 class Groupuser extends React.Component{
 
     constructor(props) {
@@ -13,12 +13,10 @@ class Groupuser extends React.Component{
     }
 
    async componentDidMount() {
-       await fetch('/api/group/getgroups/' + firebase.auth().currentUser.uid) 
-       .then((res) => {
-           return res.json();
-       }).then((bod) => {
+       await axios.get('/api/group/getgroups/' + firebase.auth().currentUser.uid) 
+       .then((bod) => {
            this.setState({
-               res: bod
+               res: bod.data
            })
        }).catch((error) => {
            console.log(error);

@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import firebase from '../../../../ServerSide/basefile';
 import Loadingblue from '../../../../Comps/Loadingblue';
-
+import axios from 'axios';
 
 
 const Posts = ({visible, grouptype, groupid, wallpostid }) => {
@@ -25,11 +25,9 @@ const Posts = ({visible, grouptype, groupid, wallpostid }) => {
         componentMounted.current = true;
            if (visible === true) {
             if (componentMounted.current) {
-              fetch('/wallpostapi/getposts/'+ grouptype + '/' + groupid + '/' + wallpostid)
-              .then((res) => {
-                return res.json();
-              }).then((bod) => {
-               const newbod = bod.sort((a, b) => new Date(a.date) - new Date(b.date));
+              axios.get('https://vincobackend.herokuapp.com/wallpostapi/getposts/'+ grouptype + '/' + groupid + '/' + wallpostid)
+              .then((bod) => {
+               const newbod = bod.data.sort((a, b) => new Date(a.date) - new Date(b.date));
                 setPostRes({
                   postres: newbod.reverse()
                 })
@@ -59,11 +57,9 @@ const Posts = ({visible, grouptype, groupid, wallpostid }) => {
         const componentMounted = useRef(null);
      
         const fetchComments = useCallback(async () => {
-         await fetch('/wallpostapi/getcomments/' + grouptype + '/' + groupid + '/' + wallpostid+ '/' + post.postid)
-         .then((response) => {
-             return response.json();
-         }).then((body) => {
-             const newbod = body.sort((a, b) => new Date(a.date) - new Date(b.date));
+         await axios.get('https://vincobackend.herokuapp.com/wallpostapi/getcomments/' + grouptype + '/' + groupid + '/' + wallpostid+ '/' + post.postid)
+         .then((body) => {
+             const newbod = body.data.sort((a, b) => new Date(a.date) - new Date(b.date));
               setResponse({
                response: newbod
               })
@@ -156,17 +152,14 @@ const Posts = ({visible, grouptype, groupid, wallpostid }) => {
                                          date: new Date()
                                      }
                              
-                                     fetch('/wallpostapi/comment/' + grouptype + '/' + groupid + '/' + wallpostid + '/' + post.postid , {
-                                         method: 'POST',
+                                     axios.post('/wallpostapi/comment/' + grouptype + '/' + groupid + '/' + wallpostid + '/' + post.postid , commentdata,{
                                          headers: {
                                          'Accept': 'application/json',
                                          'Content-Type': 'application/json'
                                          }, 
-                                         body: JSON.stringify(commentdata)
-                                     }).then((res) => {
-                                         return res.json();
-                                     }).then((bod) => {
-                                         response.response.push(bod);
+                                     })
+                                       .then((bod) => {
+                                         response.response.push(bod.data);
                                          setResponse({
                                              response: response.response
                                          })
@@ -337,13 +330,11 @@ const Posts = ({visible, grouptype, groupid, wallpostid }) => {
                                    }
             
                                    
-                                   fetch('/api/reminders/makeremindermain/' + grouptype + '/' + groupid , {
-                                       method: 'PUT',
+                                   axios.put('https://vincobackend.herokuapp.com/api/reminders/makeremindermain/' + grouptype + '/' + groupid , data,{
                                        headers: {
                                         'Accept': 'application/json',
                                         'Content-Type': 'application/json'
                                        },
-                                       body: JSON.stringify(data)
                                    }).then(() => {
                                        setReminderForm({
                                            reminderform: false
@@ -505,19 +496,14 @@ const Posts = ({visible, grouptype, groupid, wallpostid }) => {
                                             displaydate: date.getMonth().toString() + '/' + date.getDate() + '/' + date.getFullYear(),
                                         }
                                 
-                                        fetch('/wallpostapi/makepost/'+ grouptype + '/' + groupid + '/' + wallpostid, {
-                                            method: 'POST',
+                                        axios.post('/wallpostapi/makepost/'+ grouptype + '/' + groupid + '/' + wallpostid, data,{
                                             headers: {
                                                 'Accept': 'application/json',
                                                 'Content-Type': 'application/json'
                                             },
-                                            body: JSON.stringify(data)
-                                        }).then((res) => {
-                                            return res.json();
                                         })
                                         .then((body) => {
-                                            console.log(body)
-                                            postres.postres.push(body);
+                                            postres.postres.push(body.data);
                                             setPostRes({
                                                 postres: postres.postres
                                             })

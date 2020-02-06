@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import AuthNav from '../Authnav';
-
+import axios from 'axios';
 const ConnectionPage = (props) => {
 
     const [connectionresponse, setConnectionResponse] = useState({
@@ -12,12 +12,10 @@ const ConnectionPage = (props) => {
      componentMounted.current = true;
         if (componentMounted.current) {
             if (props.match.params.connectionapi !== null) {
-            fetch('/connection/fetchconnectioncredentials/' + props.match.params.connectionapi)
-            .then((res) => {
-                return res.json();
-            }).then((body) => {
+            axios.get('https://vincobackend.herokuapp.com/connection/fetchconnectioncredentials/' + props.match.params.connectionapi)
+            .then((body) => {
                 setConnectionResponse({
-                    connectionresponse: body
+                    connectionresponse: body.data
                 })
             }).catch((error) => {
                 console.log(error)

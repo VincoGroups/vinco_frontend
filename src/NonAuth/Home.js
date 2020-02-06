@@ -1,8 +1,14 @@
 import React from 'react';
 import Nav from './Comps/Nav';
+import axios from 'axios'
 
-class Home extends React.Component {
-    render() {
+const Home = () =>  {
+    axios.get("https://vincobackend.herokuapp.com/testing/apptesting")
+    .then(body => {
+        console.log(body)
+    }).catch((error) => {
+        console.log(error)
+    })
         return (
             <div>
              <Nav/>
@@ -15,7 +21,6 @@ class Home extends React.Component {
              </div>
             </div>
         )
-    }
 }
 
 export default Home;

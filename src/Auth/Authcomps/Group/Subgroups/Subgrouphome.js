@@ -3,7 +3,7 @@ import Adduserssubgroup from './functions/Adduserssubgroup';
 import {generateId} from '../../../../ServerSide/functions';
 import firebase from '../../../../ServerSide/basefile';
 import {NavLink} from 'react-router-dom';
-
+import axios from 'axios';
 class Subgrouphome extends React.Component {
 
     constructor(props) {
@@ -21,13 +21,11 @@ class Subgrouphome extends React.Component {
 
     fetchSubgroups = () => {
         setTimeout(() => {
-            fetch('/api/subgroup/getusersubgroups/' + this.props.grouptype + '/' + this.props.groupid + '/' + firebase.auth().currentUser.uid)
+            axios.get('https://vincobackend.herokuapp.com/api/subgroup/getusersubgroups/' + this.props.grouptype + '/' + this.props.groupid + '/' + firebase.auth().currentUser.uid)
             .then((res) => {
-                res.json().then((body) => {
                     this.setState({
-                        subgroupres: body
+                        subgroupres: res.data
                     })
-                })
             }).catch((error) => {
                 console.log(error);
             })
@@ -147,13 +145,11 @@ class Subgrouphome extends React.Component {
                               maingroupname: this.props.groupname
                           }
                           
-                          fetch('/api/subgroup/createsubggroup/' + this.props.grouptype + '/' + this.props.groupid  + '/' + this.props.subgroupid + '/' + firebase.auth().currentUser.uid, {
-                            method: 'PUT',
+                          axios.put('https://vincobackend.herokuapp.com/api/subgroup/createsubggroup/' + this.props.grouptype + '/' + this.props.groupid  + '/' + this.props.subgroupid + '/' + firebase.auth().currentUser.uid, data,{
                             headers: {
                               'Accept': 'application/json',
                               'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify(data)
                         }).then(() => {
                             console.log('this worked')
                             this.setState({
